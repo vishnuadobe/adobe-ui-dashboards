@@ -11,33 +11,168 @@
  */
 
 :root {
-  /* colors */
-  --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
+  /* ============================================
+     SPECTRUM 2 DESIGN TOKENS
+     ============================================ */
 
-  /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+  /* COLOR TOKENS - SEMANTIC */
+  --spectrum-background-color-primary: #ffffff;
+  --spectrum-background-color-secondary: #f4f4f4;
+  --spectrum-background-color-tertiary: #e8e8e8;
 
-  /* body sizes */
-  --body-font-size-m: 22px;
-  --body-font-size-s: 19px;
-  --body-font-size-xs: 17px;
+  --spectrum-text-color-primary: #131313;
+  --spectrum-text-color-secondary: #464646;
+  --spectrum-text-color-tertiary: #6e6e6e;
+  --spectrum-text-color-inverse: #ffffff;
+  --spectrum-text-color-disabled: #b3b3b3;
 
-  /* heading sizes */
-  --heading-font-size-xxl: 55px;
-  --heading-font-size-xl: 44px;
-  --heading-font-size-l: 34px;
-  --heading-font-size-m: 27px;
-  --heading-font-size-s: 24px;
-  --heading-font-size-xs: 22px;
+  --spectrum-border-color-primary: #d3d3d3;
+  --spectrum-border-color-secondary: #e0e0e0;
+  --spectrum-border-color-tertiary: #f0f0f0;
 
-  /* nav height */
-  --nav-height: 64px;
+  /* COLOR TOKENS - FUNCTIONAL */
+  --spectrum-color-primary: #0b5cff;
+  --spectrum-color-primary-hover: #1d3ecf;
+  --spectrum-color-primary-active: #1a2f99;
+  --spectrum-color-primary-focus: #0b5cff;
+
+  --spectrum-color-secondary: #505050;
+  --spectrum-color-secondary-hover: #383838;
+  --spectrum-color-secondary-active: #1a1a1a;
+
+  --spectrum-color-success: #0f766e;
+  --spectrum-color-success-light: #a4fae4;
+  --spectrum-color-warning: #a45a00;
+  --spectrum-color-warning-light: #ffd9b8;
+  --spectrum-color-critical: #d61419;
+  --spectrum-color-critical-light: #ffc3c8;
+  --spectrum-color-info: #0055b4;
+  --spectrum-color-info-light: #b3d9ff;
+
+  /* GRAY SCALE */
+  --spectrum-gray-50: #fafafa;
+  --spectrum-gray-75: #f4f4f4;
+  --spectrum-gray-100: #ececec;
+  --spectrum-gray-200: #d3d3d3;
+  --spectrum-gray-300: #b3b3b3;
+  --spectrum-gray-400: #8b8b8b;
+  --spectrum-gray-500: #6e6e6e;
+  --spectrum-gray-600: #505050;
+  --spectrum-gray-700: #383838;
+  --spectrum-gray-800: #1a1a1a;
+  --spectrum-gray-900: #0a0a0a;
+
+  /* TYPOGRAPHY - FONT FAMILIES */
+  --spectrum-font-family-base: roboto, roboto-fallback, -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
+  --spectrum-font-family-heading: roboto-condensed, roboto-condensed-fallback, -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
+  --spectrum-font-family-code: 'Monaco', 'Courier New', monospace;
+
+  /* TYPOGRAPHY - FONT WEIGHTS */
+  --spectrum-font-weight-light: 300;
+  --spectrum-font-weight-regular: 400;
+  --spectrum-font-weight-medium: 500;
+  --spectrum-font-weight-semibold: 600;
+  --spectrum-font-weight-bold: 700;
+
+  /* TYPOGRAPHY - HEADING SIZES */
+  --spectrum-heading-font-size-xxl: 55px;
+  --spectrum-heading-font-size-xl: 44px;
+  --spectrum-heading-font-size-l: 34px;
+  --spectrum-heading-font-size-m: 27px;
+  --spectrum-heading-font-size-s: 24px;
+  --spectrum-heading-font-size-xs: 22px;
+
+  --spectrum-heading-line-height: 1.25;
+  --spectrum-heading-font-weight: 600;
+
+  /* TYPOGRAPHY - BODY SIZES */
+  --spectrum-body-font-size-l: 22px;
+  --spectrum-body-font-size-m: 16px;
+  --spectrum-body-font-size-s: 14px;
+  --spectrum-body-font-size-xs: 12px;
+
+  --spectrum-body-line-height-lg: 1.8;
+  --spectrum-body-line-height-m: 1.6;
+  --spectrum-body-line-height-sm: 1.4;
+
+  /* SPACING TOKENS (8px base unit) */
+  --spectrum-spacing-0: 0;
+  --spectrum-spacing-1: 4px;
+  --spectrum-spacing-2: 8px;
+  --spectrum-spacing-3: 12px;
+  --spectrum-spacing-4: 16px;
+  --spectrum-spacing-5: 20px;
+  --spectrum-spacing-6: 24px;
+  --spectrum-spacing-7: 32px;
+  --spectrum-spacing-8: 40px;
+  --spectrum-spacing-9: 48px;
+  --spectrum-spacing-10: 56px;
+  --spectrum-spacing-11: 64px;
+  --spectrum-spacing-12: 80px;
+  --spectrum-spacing-13: 96px;
+
+  /* BORDER RADIUS TOKENS */
+  --spectrum-border-radius-0: 0;
+  --spectrum-border-radius-1: 4px;
+  --spectrum-border-radius-2: 8px;
+  --spectrum-border-radius-3: 12px;
+  --spectrum-border-radius-full: 9999px;
+
+  /* BORDER WIDTH TOKENS */
+  --spectrum-border-width-thin: 1px;
+  --spectrum-border-width-regular: 2px;
+  --spectrum-border-width-thick: 3px;
+
+  /* SHADOW TOKENS */
+  --spectrum-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --spectrum-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.12);
+  --spectrum-shadow-m: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --spectrum-shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --spectrum-shadow-xl: 0 12px 28px rgba(0, 0, 0, 0.15);
+
+  /* OPACITY TOKENS */
+  --spectrum-opacity-0: 0;
+  --spectrum-opacity-15: 0.15;
+  --spectrum-opacity-25: 0.25;
+  --spectrum-opacity-50: 0.5;
+  --spectrum-opacity-75: 0.75;
+  --spectrum-opacity-100: 1;
+
+  /* LAYOUT TOKENS */
+  --spectrum-nav-height: 64px;
+  --spectrum-container-max-width: 1200px;
+  --spectrum-container-padding: var(--spectrum-spacing-6);
+
+  /* TRANSITION TOKENS */
+  --spectrum-transition-duration-short: 100ms;
+  --spectrum-transition-duration-regular: 200ms;
+  --spectrum-transition-duration-long: 300ms;
+  --spectrum-transition-ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+  --spectrum-transition-ease-out: cubic-bezier(0.17, 0.67, 0.83, 0.67);
+
+  /* LEGACY SUPPORT - BACKWARD COMPATIBILITY */
+  --background-color: var(--spectrum-background-color-primary);
+  --light-color: var(--spectrum-background-color-secondary);
+  --dark-color: var(--spectrum-gray-600);
+  --text-color: var(--spectrum-text-color-primary);
+  --link-color: var(--spectrum-color-primary);
+  --link-hover-color: var(--spectrum-color-primary-hover);
+
+  --body-font-family: var(--spectrum-font-family-base);
+  --heading-font-family: var(--spectrum-font-family-heading);
+
+  --body-font-size-m: var(--spectrum-body-font-size-l);
+  --body-font-size-s: var(--spectrum-body-font-size-m);
+  --body-font-size-xs: var(--spectrum-body-font-size-s);
+
+  --heading-font-size-xxl: var(--spectrum-heading-font-size-xxl);
+  --heading-font-size-xl: var(--spectrum-heading-font-size-xl);
+  --heading-font-size-l: var(--spectrum-heading-font-size-l);
+  --heading-font-size-m: var(--spectrum-heading-font-size-m);
+  --heading-font-size-s: var(--spectrum-heading-font-size-s);
+  --heading-font-size-xs: var(--spectrum-heading-font-size-xs);
+
+  --nav-height: var(--spectrum-nav-height);
 }
 
 /* fallback fonts */
@@ -53,14 +188,28 @@
   src: local('Arial');
 }
 
+/* Spectrum 2 Responsive Overrides - Desktop (900px+) */
 @media (width >= 900px) {
   :root {
-    /* body sizes */
+    /* Responsive body sizes */
+    --spectrum-body-font-size-l: 18px;
+    --spectrum-body-font-size-m: 16px;
+    --spectrum-body-font-size-s: 14px;
+    --spectrum-body-font-size-xs: 12px;
+
+    /* Responsive heading sizes */
+    --spectrum-heading-font-size-xxl: 45px;
+    --spectrum-heading-font-size-xl: 36px;
+    --spectrum-heading-font-size-l: 28px;
+    --spectrum-heading-font-size-m: 22px;
+    --spectrum-heading-font-size-s: 20px;
+    --spectrum-heading-font-size-xs: 18px;
+
+    /* Legacy support */
     --body-font-size-m: 18px;
     --body-font-size-s: 16px;
     --body-font-size-xs: 14px;
 
-    /* heading sizes */
     --heading-font-size-xxl: 45px;
     --heading-font-size-xl: 36px;
     --heading-font-size-l: 28px;
