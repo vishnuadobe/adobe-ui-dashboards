@@ -16,16 +16,14 @@
      ============================================ */
 
   /* COLOR TOKENS - SEMANTIC */
-  --spectrum-background-color-primary: #ffffff;
+  --spectrum-background-color-primary: #fff;
   --spectrum-background-color-secondary: #f4f4f4;
   --spectrum-background-color-tertiary: #e8e8e8;
-
   --spectrum-text-color-primary: #131313;
   --spectrum-text-color-secondary: #464646;
   --spectrum-text-color-tertiary: #6e6e6e;
-  --spectrum-text-color-inverse: #ffffff;
+  --spectrum-text-color-inverse: #fff;
   --spectrum-text-color-disabled: #b3b3b3;
-
   --spectrum-border-color-primary: #d3d3d3;
   --spectrum-border-color-secondary: #e0e0e0;
   --spectrum-border-color-tertiary: #f0f0f0;
@@ -35,11 +33,9 @@
   --spectrum-color-primary-hover: #1d3ecf;
   --spectrum-color-primary-active: #1a2f99;
   --spectrum-color-primary-focus: #0b5cff;
-
   --spectrum-color-secondary: #505050;
   --spectrum-color-secondary-hover: #383838;
   --spectrum-color-secondary-active: #1a1a1a;
-
   --spectrum-color-success: #0f766e;
   --spectrum-color-success-light: #a4fae4;
   --spectrum-color-warning: #a45a00;
@@ -81,7 +77,6 @@
   --spectrum-heading-font-size-m: 27px;
   --spectrum-heading-font-size-s: 24px;
   --spectrum-heading-font-size-xs: 22px;
-
   --spectrum-heading-line-height: 1.25;
   --spectrum-heading-font-weight: 600;
 
@@ -90,7 +85,6 @@
   --spectrum-body-font-size-m: 16px;
   --spectrum-body-font-size-s: 14px;
   --spectrum-body-font-size-xs: 12px;
-
   --spectrum-body-line-height-lg: 1.8;
   --spectrum-body-line-height-m: 1.6;
   --spectrum-body-line-height-sm: 1.4;
@@ -124,11 +118,11 @@
   --spectrum-border-width-thick: 3px;
 
   /* SHADOW TOKENS */
-  --spectrum-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.12);
-  --spectrum-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.12);
-  --spectrum-shadow-m: 0 4px 12px rgba(0, 0, 0, 0.12);
-  --spectrum-shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.12);
-  --spectrum-shadow-xl: 0 12px 28px rgba(0, 0, 0, 0.15);
+  --spectrum-shadow-xs: 0 1px 3px rgb(0 0 0 / 12%);
+  --spectrum-shadow-sm: 0 2px 6px rgb(0 0 0 / 12%);
+  --spectrum-shadow-m: 0 4px 12px rgb(0 0 0 / 12%);
+  --spectrum-shadow-lg: 0 8px 20px rgb(0 0 0 / 12%);
+  --spectrum-shadow-xl: 0 12px 28px rgb(0 0 0 / 15%);
 
   /* OPACITY TOKENS */
   --spectrum-opacity-0: 0;
@@ -157,21 +151,17 @@
   --text-color: var(--spectrum-text-color-primary);
   --link-color: var(--spectrum-color-primary);
   --link-hover-color: var(--spectrum-color-primary-hover);
-
   --body-font-family: var(--spectrum-font-family-base);
   --heading-font-family: var(--spectrum-font-family-heading);
-
   --body-font-size-m: var(--spectrum-body-font-size-l);
   --body-font-size-s: var(--spectrum-body-font-size-m);
   --body-font-size-xs: var(--spectrum-body-font-size-s);
-
   --heading-font-size-xxl: var(--spectrum-heading-font-size-xxl);
   --heading-font-size-xl: var(--spectrum-heading-font-size-xl);
   --heading-font-size-l: var(--spectrum-heading-font-size-l);
   --heading-font-size-m: var(--spectrum-heading-font-size-m);
   --heading-font-size-s: var(--spectrum-heading-font-size-s);
   --heading-font-size-xs: var(--spectrum-heading-font-size-xs);
-
   --nav-height: var(--spectrum-nav-height);
 }
 
@@ -209,7 +199,6 @@
     --body-font-size-m: 18px;
     --body-font-size-s: 16px;
     --body-font-size-xs: 14px;
-
     --heading-font-size-xxl: 45px;
     --heading-font-size-xl: 36px;
     --heading-font-size-l: 28px;
