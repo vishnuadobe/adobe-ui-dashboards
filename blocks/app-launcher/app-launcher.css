@@ -1,0 +1,561 @@
+/* App Launcher Block — Spectrum 2 */
+
+.app-launcher {
+  --al-bg: var(--spectrum-background-color-secondary, #f4f4f4);
+  --al-panel: var(--spectrum-background-color-primary, #fff);
+  --al-ink: var(--spectrum-text-color-primary, #131313);
+  --al-ink-2: var(--spectrum-text-color-secondary, #464646);
+  --al-ink-3: var(--spectrum-text-color-tertiary, #6e6e6e);
+  --al-line: var(--spectrum-border-color-primary, #d3d3d3);
+  --al-line-2: var(--spectrum-border-color-tertiary, #f0f0f0);
+  --al-accent: var(--spectrum-color-primary, #0b5cff);
+  --al-accent-soft: #e8f0ff;
+  --al-danger: var(--spectrum-color-critical, #d61419);
+  --al-radius: var(--spectrum-border-radius-3, 12px);
+  --al-radius-sm: var(--spectrum-border-radius-2, 8px);
+  --al-shadow-sm: var(--spectrum-shadow-xs, 0 1px 3px rgb(0 0 0 / 12%));
+  --al-shadow-md: var(--spectrum-shadow-m, 0 4px 12px rgb(0 0 0 / 12%));
+  --al-font: var(--spectrum-font-family-base, -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif);
+  --al-transition: var(--spectrum-transition-duration-regular, 200ms);
+
+  font-family: var(--al-font);
+  background: var(--al-bg);
+  color: var(--al-ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Top bar ── */
+.app-launcher .al-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgb(244 244 244 / 88%);
+  backdrop-filter: saturate(160%) blur(10px);
+  border-bottom: 1px solid var(--al-line);
+}
+
+.app-launcher .al-topbar-inner {
+  max-width: var(--spectrum-container-max-width, 1200px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--spectrum-spacing-6, 24px);
+  align-items: center;
+  padding: var(--spectrum-spacing-4, 16px) var(--spectrum-spacing-7, 32px);
+}
+
+.app-launcher .al-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-2, 8px);
+  font-weight: var(--spectrum-font-weight-bold, 700);
+  font-size: var(--spectrum-body-font-size-m, 16px);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--al-ink);
+}
+
+.app-launcher .al-brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--spectrum-border-radius-2, 8px);
+  background: var(--al-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: var(--spectrum-font-weight-bold, 700);
+  font-size: var(--spectrum-body-font-size-s, 14px);
+  flex-shrink: 0;
+}
+
+/* Search */
+.app-launcher .al-search {
+  position: relative;
+  max-width: 520px;
+  width: 100%;
+  justify-self: center;
+}
+
+.app-launcher .al-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--al-ink-3);
+  pointer-events: none;
+}
+
+.app-launcher .al-search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 44px 0 38px;
+  background: var(--al-panel);
+  border: 1px solid var(--al-line);
+  border-radius: var(--spectrum-border-radius-2, 8px);
+  font-size: var(--spectrum-body-font-size-s, 14px);
+  font-family: var(--al-font);
+  color: var(--al-ink);
+  outline: none;
+  transition: border-color var(--al-transition), box-shadow var(--al-transition);
+}
+
+.app-launcher .al-search-input::placeholder {
+  color: var(--al-ink-3);
+}
+
+.app-launcher .al-search-input:focus {
+  border-color: var(--al-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--al-accent) 18%, transparent);
+}
+
+.app-launcher .al-kbd {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--al-ink-3);
+  font-size: 11px;
+  font-family: var(--spectrum-font-family-code, monospace);
+  border: 1px solid var(--al-line);
+  padding: 2px 6px;
+  border-radius: var(--spectrum-border-radius-1, 4px);
+  background: var(--al-line-2);
+  line-height: 1.4;
+}
+
+/* User pill */
+.app-launcher .al-user {
+  display: flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-2, 8px);
+  cursor: pointer;
+  padding: var(--spectrum-spacing-1, 4px) var(--spectrum-spacing-1, 4px) var(--spectrum-spacing-1, 4px) var(--spectrum-spacing-3, 12px);
+  border-radius: var(--spectrum-border-radius-2, 8px);
+  border: none;
+  background: transparent;
+  color: var(--al-ink);
+  font-family: var(--al-font);
+  transition: background var(--al-transition);
+}
+
+.app-launcher .al-user:hover {
+  background: rgb(0 0 0 / 4%);
+}
+
+.app-launcher .al-user-meta {
+  text-align: right;
+  line-height: 1.2;
+}
+
+.app-launcher .al-user-name {
+  font-size: var(--spectrum-body-font-size-s, 14px);
+  font-weight: var(--spectrum-font-weight-semibold, 600);
+}
+
+.app-launcher .al-user-org {
+  font-size: var(--spectrum-body-font-size-xs, 12px);
+  color: var(--al-ink-3);
+}
+
+.app-launcher .al-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--al-accent-soft), var(--al-accent));
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: var(--spectrum-body-font-size-xs, 12px);
+  font-weight: var(--spectrum-font-weight-semibold, 600);
+  flex-shrink: 0;
+}
+
+/* ── Main content ── */
+.app-launcher .al-main {
+  max-width: var(--spectrum-container-max-width, 1200px);
+  margin: 0 auto;
+  padding: var(--spectrum-spacing-7, 32px) var(--spectrum-spacing-7, 32px) var(--spectrum-spacing-12, 80px);
+}
+
+.app-launcher .al-page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spectrum-spacing-6, 24px);
+  margin-bottom: var(--spectrum-spacing-4, 16px);
+}
+
+.app-launcher .al-page-head h1 {
+  margin: 0;
+  font-size: var(--spectrum-heading-font-size-s, 24px);
+  font-family: var(--spectrum-font-family-heading, var(--al-font));
+  font-weight: var(--spectrum-heading-font-weight, 600);
+  letter-spacing: -0.015em;
+  line-height: var(--spectrum-heading-line-height, 1.25);
+}
+
+.app-launcher .al-page-head p {
+  margin: 4px 0 0;
+  color: var(--al-ink-2);
+  font-size: var(--spectrum-body-font-size-s, 14px);
+}
+
+.app-launcher .al-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-1, 4px);
+  height: 34px;
+  padding: 0 var(--spectrum-spacing-3, 12px);
+  background: var(--al-panel);
+  border: 1px solid var(--al-line);
+  border-radius: var(--spectrum-border-radius-2, 8px);
+  font-size: var(--spectrum-body-font-size-s, 14px);
+  font-family: var(--al-font);
+  color: var(--al-ink-2);
+  cursor: pointer;
+  transition: border-color var(--al-transition);
+  white-space: nowrap;
+}
+
+.app-launcher .al-sort-btn:hover {
+  border-color: var(--al-ink-3);
+}
+
+/* Tabs */
+.app-launcher .al-tabs {
+  display: flex;
+  gap: var(--spectrum-spacing-1, 4px);
+  margin: var(--spectrum-spacing-2, 8px) 0 var(--spectrum-spacing-5, 20px);
+  border-bottom: 1px solid var(--al-line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.app-launcher .al-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.app-launcher .al-tab {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: var(--spectrum-spacing-3, 12px) var(--spectrum-spacing-4, 16px);
+  font-size: var(--spectrum-body-font-size-s, 14px);
+  font-family: var(--al-font);
+  color: var(--al-ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-2, 8px);
+  white-space: nowrap;
+  transition: color var(--al-transition);
+}
+
+.app-launcher .al-tab:hover {
+  color: var(--al-ink);
+}
+
+.app-launcher .al-tab.active {
+  color: var(--al-ink);
+  border-bottom-color: var(--al-accent);
+  font-weight: var(--spectrum-font-weight-semibold, 600);
+}
+
+.app-launcher .al-tab-count {
+  font-size: 11px;
+  background: var(--al-line-2);
+  color: var(--al-ink-3);
+  padding: 2px 7px;
+  border-radius: var(--spectrum-border-radius-full, 9999px);
+  font-weight: var(--spectrum-font-weight-medium, 500);
+}
+
+.app-launcher .al-tab.active .al-tab-count {
+  background: var(--al-accent-soft);
+  color: var(--al-accent);
+}
+
+/* Section label */
+.app-launcher .al-section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spectrum-spacing-2, 8px);
+  color: var(--al-ink-2);
+  font-size: var(--spectrum-body-font-size-xs, 12px);
+  font-weight: var(--spectrum-font-weight-semibold, 600);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: var(--spectrum-spacing-2, 8px) 0 var(--spectrum-spacing-4, 16px);
+}
+
+.app-launcher .al-section-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--al-accent);
+  flex-shrink: 0;
+}
+
+/* ── Grid — 3 per row ── */
+.app-launcher .al-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spectrum-spacing-4, 16px);
+}
+
+@media (width <= 900px) {
+  .app-launcher .al-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width <= 600px) {
+  .app-launcher .al-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-launcher .al-topbar-inner {
+    padding: var(--spectrum-spacing-3, 12px) var(--spectrum-spacing-4, 16px);
+    gap: var(--spectrum-spacing-3, 12px);
+  }
+
+  .app-launcher .al-user-meta {
+    display: none;
+  }
+
+  .app-launcher .al-main {
+    padding: var(--spectrum-spacing-5, 20px) var(--spectrum-spacing-4, 16px) var(--spectrum-spacing-12, 80px);
+  }
+}
+
+/* ── Card ── */
+.app-launcher .al-card {
+  position: relative;
+  background: var(--al-panel);
+  border: 1px solid var(--al-line);
+  border-radius: var(--al-radius);
+  padding: var(--spectrum-spacing-5, 20px) var(--spectrum-spacing-5, 20px) var(--spectrum-spacing-4, 16px);
+  cursor: pointer;
+  transition: transform var(--al-transition) ease, box-shadow var(--al-transition) ease, border-color var(--al-transition);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.app-launcher .al-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--al-shadow-md);
+  border-color: color-mix(in oklab, var(--al-accent) 35%, var(--al-line));
+}
+
+.app-launcher .al-card:active {
+  transform: translateY(0);
+}
+
+.app-launcher .al-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.app-launcher .al-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--spectrum-border-radius-2, 8px);
+  display: grid;
+  place-items: center;
+  font-weight: var(--spectrum-font-weight-bold, 700);
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  background: var(--icon-bg, var(--al-line-2));
+  color: var(--icon-fg, var(--al-ink));
+}
+
+.app-launcher .al-card-actions {
+  display: flex;
+  gap: var(--spectrum-spacing-1, 4px);
+}
+
+.app-launcher .al-iconbtn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--spectrum-border-radius-1, 4px);
+  background: transparent;
+  border: 0;
+  color: var(--al-ink-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--al-transition), color var(--al-transition);
+}
+
+.app-launcher .al-iconbtn:hover {
+  background: rgb(0 0 0 / 6%);
+  color: var(--al-ink);
+}
+
+.app-launcher .al-iconbtn.fav-on {
+  color: #e0a400;
+}
+
+.app-launcher .al-card-body {
+  margin-top: var(--spectrum-spacing-4, 16px);
+}
+
+.app-launcher .al-card-name {
+  font-size: 15px;
+  font-weight: var(--spectrum-font-weight-semibold, 600);
+  letter-spacing: -0.01em;
+  color: var(--al-ink);
+}
+
+.app-launcher .al-card-desc {
+  margin-top: var(--spectrum-spacing-1, 4px);
+  color: var(--al-ink-2);
+  font-size: var(--spectrum-body-font-size-s, 14px);
+  line-height: var(--spectrum-body-line-height-sm, 1.4);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.app-launcher .al-card-foot {
+  margin-top: var(--spectrum-spacing-4, 16px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--spectrum-body-font-size-xs, 12px);
+  color: var(--al-ink-3);
+}
+
+.app-launcher .al-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px var(--spectrum-spacing-2, 8px);
+  border-radius: var(--spectrum-border-radius-full, 9999px);
+  background: var(--al-line-2);
+  color: var(--al-ink-2);
+  font-size: 11px;
+  font-weight: var(--spectrum-font-weight-medium, 500);
+}
+
+.app-launcher .al-launch-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--al-ink-3);
+  font-size: var(--spectrum-body-font-size-xs, 12px);
+}
+
+/* Kebab menu */
+.app-launcher .al-menu {
+  position: absolute;
+  right: 16px;
+  top: 52px;
+  background: var(--al-panel);
+  border: 1px solid var(--al-line);
+  border-radius: var(--spectrum-border-radius-2, 8px);
+  box-shadow: var(--al-shadow-md);
+  min-width: 184px;
+  padding: var(--spectrum-spacing-1, 4px);
+  z-index: 5;
+}
+
+.app-launcher .al-menu-btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: var(--spectrum-spacing-2, 8px) var(--spectrum-spacing-3, 12px);
+  font-size: var(--spectrum-body-font-size-s, 14px);
+  font-family: var(--al-font);
+  border-radius: var(--spectrum-border-radius-1, 4px);
+  cursor: pointer;
+  color: var(--al-ink);
+  display: block;
+  transition: background var(--al-transition);
+}
+
+.app-launcher .al-menu-btn:hover {
+  background: var(--al-line-2);
+}
+
+.app-launcher .al-menu-btn.danger {
+  color: var(--al-danger);
+}
+
+.app-launcher .al-menu-sep {
+  height: 1px;
+  background: var(--al-line);
+  margin: var(--spectrum-spacing-1, 4px) var(--spectrum-spacing-2, 8px);
+}
+
+/* Empty state */
+.app-launcher .al-empty {
+  padding: var(--spectrum-spacing-10, 56px) var(--spectrum-spacing-5, 20px);
+  text-align: center;
+  color: var(--al-ink-2);
+  border: 1px dashed var(--al-line);
+  border-radius: var(--al-radius);
+  background: var(--al-panel);
+}
+
+.app-launcher .al-empty h3 {
+  margin: var(--spectrum-spacing-2, 8px) 0 var(--spectrum-spacing-1, 4px);
+  color: var(--al-ink);
+  font-weight: var(--spectrum-font-weight-semibold, 600);
+  font-size: 15px;
+}
+
+.app-launcher .al-empty p {
+  margin: 0;
+  font-size: var(--spectrum-body-font-size-s, 14px);
+}
+
+/* Toast */
+.app-launcher .al-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  background: var(--al-ink);
+  color: #fff;
+  padding: var(--spectrum-spacing-3, 12px) var(--spectrum-spacing-4, 16px);
+  border-radius: var(--spectrum-border-radius-full, 9999px);
+  font-size: var(--spectrum-body-font-size-s, 14px);
+  z-index: 60;
+  box-shadow: var(--al-shadow-md);
+  white-space: nowrap;
+  animation: al-toast-in 0.2s ease;
+}
+
+@keyframes al-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Footer */
+.app-launcher .al-footer {
+  max-width: var(--spectrum-container-max-width, 1200px);
+  margin: 0 auto;
+  padding: var(--spectrum-spacing-5, 20px) var(--spectrum-spacing-7, 32px) var(--spectrum-spacing-9, 48px);
+  color: var(--al-ink-3);
+  font-size: var(--spectrum-body-font-size-xs, 12px);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spectrum-spacing-4, 16px);
+  flex-wrap: wrap;
+}
