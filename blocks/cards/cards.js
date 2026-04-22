@@ -82,7 +82,7 @@ function createDrawer() {
   description.classList.add('app-cards-drawer-description');
 
   const action = document.createElement('a');
-  action.classList.add('app-cards-drawer-link');
+  action.classList.add('app-cards-drawer-link', 'button', 'accent');
   action.textContent = 'Open app';
   action.setAttribute('hidden', '');
 
