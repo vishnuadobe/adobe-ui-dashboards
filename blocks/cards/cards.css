@@ -218,7 +218,6 @@
   line-height: var(--spectrum-body-line-height-m, 1.6);
 }
 
-.app-cards-drawer-link.button:any-link,
 .app-cards-drawer-link.button {
   display: inline-flex;
   align-items: center;
@@ -241,8 +240,6 @@
     color var(--spectrum-transition-duration-short, 100ms) var(--spectrum-transition-ease-in-out, ease);
 }
 
-.app-cards-drawer-link.button:any-link:hover,
-.app-cards-drawer-link.button:any-link:focus-visible,
 .app-cards-drawer-link.button:hover,
 .app-cards-drawer-link.button:focus-visible {
   border-color: var(--spectrum-color-primary-hover, #1d3ecf);
@@ -251,14 +248,14 @@
   text-decoration: none;
 }
 
-@media (min-width: 600px) {
+@media (width >= 600px) {
   .app-cards-grid {
     max-width: 38rem;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 900px) {
+@media (width >= 900px) {
   .app-cards-grid {
     max-width: 58rem;
     grid-template-columns: repeat(3, minmax(0, 1fr));
