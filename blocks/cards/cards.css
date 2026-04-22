@@ -3,6 +3,21 @@
    Scoped to .app-cards - mobile-first
    ========================================================================== */
 
+body.app-cards-drawer-open {
+  overflow: hidden;
+}
+
+.app-cards-shell {
+  width: 100%;
+}
+
+.app-cards-drawer-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+}
+
 .app-cards-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -10,7 +25,7 @@
   list-style: none;
   max-width: 21rem;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 var(--spectrum-spacing-3, 12px);
 }
 
 .app-cards-card {
@@ -136,9 +151,8 @@
 }
 
 .app-cards-drawer-overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 999;
   background: rgb(0 0 0 / 36%);
   opacity: 0;
   pointer-events: none;
@@ -151,10 +165,9 @@
 }
 
 .app-cards-drawer {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
-  z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: var(--spectrum-spacing-6, 24px);
@@ -163,12 +176,16 @@
   padding: var(--spectrum-spacing-6, 24px);
   background: var(--spectrum-background-color-primary, #fff);
   box-shadow: -8px 0 24px rgb(0 0 0 / 14%);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   transform: translateX(100%);
   transition: transform var(--spectrum-transition-duration-regular, 200ms) var(--spectrum-transition-ease-in-out, ease);
 }
 
 .app-cards-drawer[aria-hidden='false'] {
   transform: translateX(0);
+  pointer-events: auto;
 }
 
 .app-cards-drawer-header {
@@ -180,10 +197,12 @@
 
 .app-cards-drawer-title {
   margin: 0;
+  min-width: 0;
   color: var(--spectrum-text-color-primary, #131313);
   font-size: var(--spectrum-heading-font-size-xs, 22px);
   font-family: var(--spectrum-font-family-heading, sans-serif);
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .app-cards-drawer-close {
@@ -197,6 +216,7 @@
   font-size: var(--spectrum-body-font-size-s, 14px);
   font-weight: var(--spectrum-font-weight-medium, 500);
   line-height: 1.25;
+  flex-shrink: 0;
 }
 
 .app-cards-drawer-close:focus-visible,
@@ -248,9 +268,94 @@
   text-decoration: none;
 }
 
+@media (width < 600px) {
+  .app-cards-grid {
+    max-width: 100%;
+    gap: var(--spectrum-spacing-4, 16px);
+  }
+
+  .app-cards-card {
+    min-height: 10.5rem;
+    padding:
+      var(--spectrum-spacing-7, 32px)
+      var(--spectrum-spacing-5, 20px)
+      var(--spectrum-spacing-6, 24px);
+  }
+
+  .app-cards-content {
+    gap: var(--spectrum-spacing-4, 16px);
+  }
+
+  .app-cards-menu {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .app-cards-icon {
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+
+  .app-cards-monogram {
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 1.25rem;
+  }
+
+  .app-cards-name {
+    max-width: 100%;
+    font-size: var(--spectrum-heading-font-size-xs, 18px);
+  }
+
+  .app-cards-drawer {
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
+    gap: var(--spectrum-spacing-5, 20px);
+    min-height: 100dvh;
+    height: 100dvh;
+    padding:
+      max(env(safe-area-inset-top), var(--spectrum-spacing-5, 20px))
+      var(--spectrum-spacing-5, 20px)
+      max(env(safe-area-inset-bottom), var(--spectrum-spacing-5, 20px));
+  }
+
+  .app-cards-drawer-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spectrum-spacing-3, 12px);
+  }
+
+  .app-cards-drawer-title {
+    max-width: 100%;
+    font-size: var(--spectrum-heading-font-size-s, 20px);
+  }
+
+  .app-cards-drawer-close {
+    align-self: flex-start;
+    min-height: 2.25rem;
+    padding: 0.375rem 0.875rem;
+    font-size: var(--spectrum-body-font-size-xs, 12px);
+  }
+
+  .app-cards-drawer-description {
+    font-size: var(--spectrum-body-font-size-xs, 12px);
+    line-height: var(--spectrum-body-line-height-sm, 1.4);
+    overflow-wrap: anywhere;
+  }
+
+  .app-cards-drawer-link.button {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--spectrum-spacing-3, 12px);
+  }
+}
+
 @media (width >= 600px) {
   .app-cards-grid {
     max-width: 38rem;
+    padding-inline: 0;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
