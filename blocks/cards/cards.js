@@ -1,3 +1,6 @@
+import { html, render } from '../../vendor/htm-preact.js';
+import { useEffect, useState } from '../../vendor/preact-hooks.js';
+
 /**
  * Checks whether an href value is usable for a card CTA.
  *
@@ -49,55 +52,215 @@ function isHeaderRow(cols) {
 }
 
 /**
- * Creates the shared drawer used by all cards in the block.
+ * Serializes the authored icon content into a renderable payload.
  *
- * @returns {Object} Drawer elements
+ * @param {Element | undefined} iconCol The icon column
+ * @returns {{ html: string, hasVisual: boolean }} The serialized icon content
  */
-function createDrawer() {
-  const overlay = document.createElement('div');
-  overlay.classList.add('app-cards-drawer-overlay');
-  overlay.setAttribute('hidden', '');
+function getIconPayload(iconCol) {
+  const picture = iconCol?.querySelector('picture');
+  if (picture) {
+    const img = picture.querySelector('img');
+    img?.removeAttribute('width');
+    img?.removeAttribute('height');
+    return { html: picture.outerHTML, hasVisual: true };
+  }
 
-  const drawer = document.createElement('aside');
-  drawer.classList.add('app-cards-drawer');
-  drawer.setAttribute('aria-hidden', 'true');
-  drawer.setAttribute('aria-label', 'Card details');
+  const img = iconCol?.querySelector('img');
+  if (img) {
+    img.removeAttribute('width');
+    img.removeAttribute('height');
+    return { html: img.outerHTML, hasVisual: true };
+  }
 
-  const header = document.createElement('div');
-  header.classList.add('app-cards-drawer-header');
+  const svg = iconCol?.querySelector('svg');
+  if (svg) return { html: svg.outerHTML, hasVisual: true };
 
-  const title = document.createElement('h2');
-  title.classList.add('app-cards-drawer-title');
+  return { html: '', hasVisual: false };
+}
 
-  const closeBtn = document.createElement('button');
-  closeBtn.classList.add('app-cards-drawer-close');
-  closeBtn.setAttribute('type', 'button');
-  closeBtn.setAttribute('aria-label', 'Close details');
-  closeBtn.textContent = 'Close';
+/**
+ * Reads authored cards from the block markup.
+ *
+ * @param {Element} block The block element
+ * @returns {Array} Parsed card items
+ */
+function getCardItems(block) {
+  return [...block.children]
+    .map((row) => [...row.children])
+    .filter((cols) => cols.length >= 4 && !isHeaderRow(cols))
+    .map((cols) => {
+      const [iconCol, titleCol, descriptionCol, linkCol] = cols;
+      const name = titleCol?.textContent?.trim() ?? '';
+      const description = descriptionCol?.textContent?.trim() ?? '';
+      const href = getCardHref(linkCol);
+      const icon = getIconPayload(iconCol);
 
-  const body = document.createElement('div');
-  body.classList.add('app-cards-drawer-body');
+      return {
+        name,
+        description,
+        href,
+        iconHtml: icon.html,
+        hasIcon: icon.hasVisual,
+      };
+    });
+}
 
-  const description = document.createElement('p');
-  description.classList.add('app-cards-drawer-description');
+/**
+ * Renders a card icon or monogram.
+ *
+ * @param {Object} props Component props
+ * @param {string} props.name The card title
+ * @param {string} props.iconHtml Serialized icon markup
+ * @param {boolean} props.hasIcon Whether the card has icon markup
+ * @returns {import('../../vendor/preact.js').ComponentChild} Rendered icon
+ */
+function CardIcon({ name, iconHtml, hasIcon }) {
+  if (hasIcon) {
+    return html`<div
+      class="app-cards-icon"
+      dangerouslySetInnerHTML=${{ __html: iconHtml }}
+    />`;
+  }
 
-  const action = document.createElement('a');
-  action.classList.add('app-cards-drawer-link', 'button', 'accent');
-  action.textContent = 'Open app';
-  action.setAttribute('hidden', '');
+  return html`
+    <div class="app-cards-icon">
+      <span class="app-cards-monogram">${name.charAt(0).toUpperCase() || '?'}</span>
+    </div>
+  `;
+}
 
-  header.append(title, closeBtn);
-  body.append(description, action);
-  drawer.append(header, body);
+/**
+ * Drawer component.
+ *
+ * @param {Object} props Component props
+ * @param {Object | null} props.activeItem The active card item
+ * @param {Function} props.onClose Drawer close handler
+ * @returns {import('../../vendor/preact.js').ComponentChild} Drawer UI
+ */
+function Drawer({ activeItem, onClose }) {
+  const isOpen = Boolean(activeItem);
 
-  return {
-    overlay,
-    drawer,
-    title,
-    description,
-    action,
-    closeBtn,
-  };
+  return html`
+    <div class="app-cards-drawer-layer">
+      <div
+        class="app-cards-drawer-overlay"
+        hidden=${!isOpen}
+        onClick=${onClose}
+      ></div>
+      <aside
+        class="app-cards-drawer"
+        aria-hidden=${isOpen ? 'false' : 'true'}
+        aria-label="Card details"
+      >
+        <div class="app-cards-drawer-header">
+          <h2 class="app-cards-drawer-title">${activeItem?.name ?? ''}</h2>
+          <button
+            class="app-cards-drawer-close"
+            type="button"
+            aria-label="Close details"
+            onClick=${onClose}
+          >
+            Close
+          </button>
+        </div>
+        <div class="app-cards-drawer-body">
+          <p class="app-cards-drawer-description">${activeItem?.description ?? ''}</p>
+          ${activeItem?.href ? html`
+            <a
+              class="app-cards-drawer-link button accent"
+              href=${activeItem.href}
+            >
+              Open app
+            </a>
+          ` : null}
+        </div>
+      </aside>
+    </div>
+  `;
+}
+
+/**
+ * Card tile component.
+ *
+ * @param {Object} props Component props
+ * @param {Object} props.item Card item
+ * @param {Function} props.onOpenDetails Drawer open handler
+ * @returns {import('../../vendor/preact.js').ComponentChild} Card UI
+ */
+function CardTile({ item, onOpenDetails }) {
+  return html`
+    <li class="app-cards-card">
+      ${item.href ? html`
+        <a
+          class="app-cards-link"
+          href=${item.href}
+          aria-label=${item.name ? `Open ${item.name}` : 'Open card'}
+        ></a>
+      ` : null}
+      <button
+        class="app-cards-menu"
+        type="button"
+        aria-label=${item.name ? `Open details for ${item.name}` : 'Open details'}
+        onClick=${onOpenDetails}
+      >
+        <span aria-hidden="true">...</span>
+      </button>
+      <div class="app-cards-content">
+        <${CardIcon}
+          name=${item.name}
+          iconHtml=${item.iconHtml}
+          hasIcon=${item.hasIcon}
+        />
+        <p class="app-cards-name">${item.name}</p>
+      </div>
+    </li>
+  `;
+}
+
+/**
+ * Cards app component.
+ *
+ * @param {Object} props Component props
+ * @param {Array} props.items Parsed card items
+ * @returns {import('../../vendor/preact.js').ComponentChild} Cards UI
+ */
+function CardsApp({ items }) {
+  const [activeItem, setActiveItem] = useState(null);
+  const cardTiles = items.map((item) => {
+    const openDetails = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setActiveItem(item);
+    };
+
+    return html`<${CardTile} key=${item.name} item=${item} onOpenDetails=${openDetails} />`;
+  });
+
+  useEffect(() => {
+    if (!activeItem) return () => {};
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') setActiveItem(null);
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    document.body.classList.add('app-cards-drawer-open');
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.classList.remove('app-cards-drawer-open');
+    };
+  }, [activeItem]);
+
+  return html`
+    <div class="app-cards-shell">
+      <ul class="app-cards-grid" role="list">
+        ${cardTiles}
+      </ul>
+      <${Drawer} activeItem=${activeItem} onClose=${() => setActiveItem(null)} />
+    </div>
+  `;
 }
 
 /**
@@ -111,114 +274,7 @@ function createDrawer() {
  * @param {Element} block The block element
  */
 export default function decorate(block) {
-  const rows = [...block.children];
-  const grid = document.createElement('ul');
-  grid.classList.add('app-cards-grid');
-  grid.setAttribute('role', 'list');
-
-  const {
-    overlay,
-    drawer,
-    title: drawerTitle,
-    description: drawerDescription,
-    action: drawerAction,
-    closeBtn,
-  } = createDrawer();
-
-  const closeDrawer = () => {
-    overlay.setAttribute('hidden', '');
-    drawer.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('app-cards-drawer-open');
-  };
-
-  const openDrawer = ({ name, description, href }) => {
-    drawerTitle.textContent = name;
-    drawerDescription.textContent = description;
-
-    if (href) {
-      drawerAction.href = href;
-      drawerAction.removeAttribute('hidden');
-    } else {
-      drawerAction.removeAttribute('href');
-      drawerAction.setAttribute('hidden', '');
-    }
-
-    overlay.removeAttribute('hidden');
-    drawer.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('app-cards-drawer-open');
-  };
-
-  overlay.addEventListener('click', closeDrawer);
-  closeBtn.addEventListener('click', closeDrawer);
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && drawer.getAttribute('aria-hidden') === 'false') {
-      closeDrawer();
-    }
-  });
-
-  rows.forEach((row) => {
-    const cols = [...row.children];
-    const [iconCol, titleCol, descriptionCol, linkCol] = cols;
-
-    if (cols.length < 4 || isHeaderRow(cols)) return;
-
-    const card = document.createElement('li');
-    card.classList.add('app-cards-card');
-
-    const content = document.createElement('div');
-    content.classList.add('app-cards-content');
-
-    const name = titleCol?.textContent?.trim() ?? '';
-    const description = descriptionCol?.textContent?.trim() ?? '';
-    const href = getCardHref(linkCol);
-
-    const menuBtn = document.createElement('button');
-    menuBtn.classList.add('app-cards-menu');
-    menuBtn.setAttribute('aria-label', name ? `Open details for ${name}` : 'Open details');
-    menuBtn.setAttribute('type', 'button');
-    menuBtn.innerHTML = '<span aria-hidden="true">...</span>';
-    menuBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      openDrawer({ name, description, href });
-    });
-
-    const iconWrapper = document.createElement('div');
-    iconWrapper.classList.add('app-cards-icon');
-
-    const picture = iconCol?.querySelector('picture');
-    const img = picture?.querySelector('img') ?? iconCol?.querySelector('img, svg');
-    if (picture) {
-      img?.removeAttribute('width');
-      img?.removeAttribute('height');
-      iconWrapper.append(picture);
-    } else if (img) {
-      img.removeAttribute('width');
-      img.removeAttribute('height');
-      iconWrapper.append(img);
-    } else {
-      const monogram = document.createElement('span');
-      monogram.classList.add('app-cards-monogram');
-      monogram.textContent = name.charAt(0).toUpperCase() || '?';
-      iconWrapper.append(monogram);
-    }
-
-    const title = document.createElement('p');
-    title.classList.add('app-cards-name');
-    title.textContent = name;
-
-    if (href) {
-      const cardLink = document.createElement('a');
-      cardLink.classList.add('app-cards-link');
-      cardLink.href = href;
-      cardLink.setAttribute('aria-label', name ? `Open ${name}` : 'Open card');
-      card.append(cardLink);
-    }
-
-    content.append(iconWrapper, title);
-    card.append(menuBtn, content);
-    grid.append(card);
-  });
-
-  block.replaceChildren(grid, overlay, drawer);
+  const items = getCardItems(block);
+  block.replaceChildren();
+  render(html`<${CardsApp} items=${items} />`, block);
 }
