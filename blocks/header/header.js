@@ -137,6 +137,25 @@ export default async function decorate(block) {
     brandLink.closest('.button-container').className = '';
   }
 
+  const brandAnchor = navBrand.querySelector('a');
+  const brandPicture = navBrand.querySelector('picture');
+  const brandImage = navBrand.querySelector('img');
+
+  if (brandAnchor) {
+    brandAnchor.classList.add('nav-brand-link');
+  }
+
+  if (brandPicture) {
+    brandPicture.classList.add('nav-brand-picture');
+  }
+
+  if (brandImage) {
+    brandImage.classList.add('nav-brand-logo');
+    if (!brandImage.getAttribute('decoding')) {
+      brandImage.setAttribute('decoding', 'async');
+    }
+  }
+
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
