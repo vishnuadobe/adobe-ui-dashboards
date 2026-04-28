@@ -1,20 +1,18 @@
 footer {
   background-color: var(--light-color);
-  font-size: var(--body-font-size-xs);
+  font-size: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
 }
 
 footer .footer > div {
   margin: auto;
-  max-width: 1200px;
-  padding: 40px 24px 24px;
+  max-width: min(75rem, 100%);
+  padding:
+    clamp(1.5rem, 1rem + 2vw, 2.5rem)
+    clamp(1rem, 0.5rem + 2vw, 2rem)
+    clamp(1rem, 0.75rem + 1vw, 1.5rem);
 }
 
 footer .footer p {
   margin: 0;
-}
-
-@media (width >= 900px) {
-  footer .footer > div {
-    padding: 40px 32px 24px;
-  }
+  line-height: 1.5;
 }
