@@ -90,6 +90,7 @@ export default async function decorate(block) {
 
   /* ── SVG icons ── */
   const IconSearch = () => html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>`;
+  const IconFilter = () => html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`;
   const IconStar = ({ filled }) => html`<svg width="16" height="16" viewBox="0 0 24 24" fill=${filled ? 'currentColor' : 'none'} stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/></svg>`;
   const IconKebab = () => html`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>`;
   const IconExt = () => html`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>`;
@@ -269,32 +270,39 @@ export default async function decorate(block) {
         <header class="al-topbar">
           <div class="al-topbar-inner">
             <a class="al-brand" href="/">
-              <div class="al-brand-mark">L</div>
-              <span>Launchpad</span>
+              <div class="al-brand-mark">A</div>
+              <span>Adobe Launchpad</span>
             </a>
 
-            <div class="al-search" role="search">
-              <span class="al-search-icon" aria-hidden="true"><${IconSearch} /></span>
-              <input
-                ref=${searchRef}
-                class="al-search-input"
-                type="search"
-                value=${q}
-                onInput=${(e) => setQ(e.target.value)}
-                placeholder="Search your apps"
-                aria-label="Search apps"
-              />
-              <span class="al-kbd" aria-hidden="true">/</span>
-            </div>
-
-            <button class="al-user" aria-label="User menu">
-              <div class="al-user-meta">
-                <div class="al-user-name">Jordan Reeve</div>
-                <div class="al-user-org">Northwind Labs</div>
+            <div class="al-topbar-controls">
+              <div class="al-search" role="search">
+                <span class="al-search-icon" aria-hidden="true"><${IconSearch} /></span>
+                <input
+                  ref=${searchRef}
+                  class="al-search-input"
+                  type="search"
+                  value=${q}
+                  onInput=${(e) => setQ(e.target.value)}
+                  placeholder="Search your apps"
+                  aria-label="Search apps"
+                />
+                <span class="al-kbd" aria-hidden="true">/</span>
               </div>
-              <div class="al-avatar" aria-hidden="true">JR</div>
-              <${IconChev} />
-            </button>
+
+              <button class="al-filter-btn" aria-label="Filter apps">
+                <${IconFilter} />
+                <span>Filter</span>
+              </button>
+
+              <button class="al-user" aria-label="User menu">
+                <div class="al-user-meta">
+                  <div class="al-user-name">Jordan Reeve</div>
+                  <div class="al-user-org">Northwind Labs</div>
+                </div>
+                <div class="al-avatar" aria-hidden="true">JR</div>
+                <${IconChev} />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -339,7 +347,7 @@ export default async function decorate(block) {
     : html`
               <div class="al-grid" role="list">
                 ${visible.map((app) => html`
-                  <div role="listitem" key=${app.id}>
+                  <div role="listitem" class="al-grid-item" key=${app.id}>
                     <${AppCard}
                       app=${app}
                       favorite=${favs.includes(app.id)}
