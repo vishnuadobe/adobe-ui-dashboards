@@ -45,10 +45,15 @@ function isHeaderRow(cols) {
   if (cols.length < 4) return false;
 
   const labels = cols.map((col) => col.textContent?.trim().toLowerCase() ?? '');
-  return labels[0] === 'icon'
+  const isFourCol = labels[0] === 'icon'
     && labels[1] === 'title'
     && labels[2] === 'description'
     && labels[3] === 'link';
+
+  const isFiveCol = cols.length >= 5 && labels[0] === 'icon' && labels[1] === 'title'
+    && labels[2] === 'description' && labels[3] === 'link' && labels[4] === 'image';
+
+  return isFourCol || isFiveCol;
 }
 
 /**
@@ -80,6 +85,31 @@ function getIconPayload(iconCol) {
 }
 
 /**
+ * Serializes the authored image content into a renderable payload.
+ *
+ * @param {Element | undefined} imageCol The image column
+ * @returns {{ html: string, hasImage: boolean }} The serialized image content
+ */
+function getImagePayload(imageCol) {
+  const picture = imageCol?.querySelector('picture');
+  if (picture) {
+    const img = picture.querySelector('img');
+    img?.removeAttribute('width');
+    img?.removeAttribute('height');
+    return { html: picture.outerHTML, hasImage: true };
+  }
+
+  const img = imageCol?.querySelector('img');
+  if (img) {
+    img.removeAttribute('width');
+    img.removeAttribute('height');
+    return { html: img.outerHTML, hasImage: true };
+  }
+
+  return { html: '', hasImage: false };
+}
+
+/**
  * Reads authored cards from the block markup.
  *
  * @param {Element} block The block element
@@ -90,11 +120,12 @@ function getCardItems(block) {
     .map((row) => [...row.children])
     .filter((cols) => cols.length >= 4 && !isHeaderRow(cols))
     .map((cols) => {
-      const [iconCol, titleCol, descriptionCol, linkCol] = cols;
+      const [iconCol, titleCol, descriptionCol, linkCol, imageCol] = cols;
       const name = titleCol?.textContent?.trim() ?? '';
       const description = descriptionCol?.textContent?.trim() ?? '';
       const href = getCardHref(linkCol);
       const icon = getIconPayload(iconCol);
+      const image = getImagePayload(imageCol);
 
       return {
         name,
@@ -102,6 +133,8 @@ function getCardItems(block) {
         href,
         iconHtml: icon.html,
         hasIcon: icon.hasVisual,
+        imageHtml: image.html,
+        hasImage: image.hasImage,
       };
     });
 }
@@ -164,6 +197,12 @@ function Drawer({ activeItem, onClose }) {
             Close
           </button>
         </div>
+        ${activeItem?.hasImage ? html`
+          <div
+            class="app-cards-drawer-image"
+            dangerouslySetInnerHTML=${{ __html: activeItem.imageHtml }}
+          />
+        ` : null}
         <div class="app-cards-drawer-body">
           <p class="app-cards-drawer-description">${activeItem?.description ?? ''}</p>
           ${activeItem?.href ? html`
@@ -268,8 +307,8 @@ function CardsApp({ items }) {
  *
  * Authored structure:
  * | Cards |
- * | Icon | Title | Description | Link |
- * | [img] | Photoshop | Edit and composite images | https://example.com/photoshop |
+ * | Icon | Title | Description | Link | Image |
+ * | [img] | Photoshop | Edit and composite images | https://example.com/photoshop | [screenshot] |
  *
  * @param {Element} block The block element
  */
