@@ -60,6 +60,18 @@ body.app-cards-drawer-open {
   border-radius: inherit;
 }
 
+.app-cards-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 /* Body: centered icon + name */
 .app-cards-body {
   position: relative;

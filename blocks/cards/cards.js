@@ -57,12 +57,14 @@ function isHeaderRow(cols) {
  * @param {Element | undefined} iconCol The icon column
  * @returns {{ html: string, hasVisual: boolean }} The serialized icon content
  */
-function getIconPayload(iconCol) {
+function getIconPayload(iconCol, name) {
+  const altText = name ? `${name} icon` : '';
   const picture = iconCol?.querySelector('picture');
   if (picture) {
     const img = picture.querySelector('img');
     img?.removeAttribute('width');
     img?.removeAttribute('height');
+    if (img && !img.getAttribute('alt')) img.setAttribute('alt', altText);
     return { html: picture.outerHTML, hasVisual: true };
   }
 
@@ -70,6 +72,7 @@ function getIconPayload(iconCol) {
   if (img) {
     img.removeAttribute('width');
     img.removeAttribute('height');
+    if (!img.getAttribute('alt')) img.setAttribute('alt', altText);
     return { html: img.outerHTML, hasVisual: true };
   }
 
@@ -119,7 +122,7 @@ function getCardItems(block) {
       const description = descriptionCol?.textContent?.trim() ?? '';
       const href = getCardHref(linkCol);
       const tag = tagCol?.textContent?.trim() ?? '';
-      const icon = getIconPayload(iconCol);
+      const icon = getIconPayload(iconCol, name);
       const palette = icon.hasVisual ? null : pickPalette(name);
 
       return {
@@ -221,14 +224,15 @@ function Drawer({ activeItem, onClose }) {
  * @returns {import('../../vendor/preact.js').ComponentChild} Card UI
  */
 function CardTile({ item, onOpenDetails }) {
+  const linkLabel = item.name ? `Open ${item.name}` : 'Open card';
   return html`
     <li class="app-cards-card">
       ${item.href ? html`
         <a
           class="app-cards-link"
           href=${item.href}
-          aria-label=${item.name ? `Open ${item.name}` : 'Open card'}
-        ></a>
+          aria-label=${linkLabel}
+        ><span class="app-cards-visually-hidden">${linkLabel}</span></a>
       ` : null}
       <button
         class="app-cards-menu"
@@ -245,7 +249,7 @@ function CardTile({ item, onOpenDetails }) {
           hasIcon=${item.hasIcon}
           palette=${item.palette}
         />
-        <p class="app-cards-name">${item.name}</p>
+        <h3 class="app-cards-name">${item.name}</h3>
       </div>
     </li>
   `;
