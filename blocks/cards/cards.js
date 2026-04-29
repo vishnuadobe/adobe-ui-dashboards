@@ -62,12 +62,14 @@ function isHeaderRow(cols) {
  * @param {Element | undefined} iconCol The icon column
  * @returns {{ html: string, hasVisual: boolean }} The serialized icon content
  */
-function getIconPayload(iconCol) {
+function getIconPayload(iconCol, name) {
+  const altText = name ? `${name} icon` : '';
   const picture = iconCol?.querySelector('picture');
   if (picture) {
     const img = picture.querySelector('img');
     img?.removeAttribute('width');
     img?.removeAttribute('height');
+    if (img && !img.getAttribute('alt')) img.setAttribute('alt', altText);
     return { html: picture.outerHTML, hasVisual: true };
   }
 
@@ -75,6 +77,7 @@ function getIconPayload(iconCol) {
   if (img) {
     img.removeAttribute('width');
     img.removeAttribute('height');
+    if (!img.getAttribute('alt')) img.setAttribute('alt', altText);
     return { html: img.outerHTML, hasVisual: true };
   }
 
@@ -131,6 +134,7 @@ function getCardItems(block) {
         name,
         description,
         href,
+        tag,
         iconHtml: icon.html,
         hasIcon: icon.hasVisual,
         imageHtml: image.html,
@@ -146,18 +150,22 @@ function getCardItems(block) {
  * @param {string} props.name The card title
  * @param {string} props.iconHtml Serialized icon markup
  * @param {boolean} props.hasIcon Whether the card has icon markup
+ * @param {Object | null} props.palette Background/foreground for the monogram
  * @returns {import('../../vendor/preact.js').ComponentChild} Rendered icon
  */
-function CardIcon({ name, iconHtml, hasIcon }) {
+function CardIcon({
+  name, iconHtml, hasIcon, palette,
+}) {
   if (hasIcon) {
     return html`<div
-      class="app-cards-icon"
+      class="app-cards-icon has-image"
       dangerouslySetInnerHTML=${{ __html: iconHtml }}
     />`;
   }
 
+  const style = palette ? `--icon-bg:${palette.bg};--icon-fg:${palette.fg};` : '';
   return html`
-    <div class="app-cards-icon">
+    <div class="app-cards-icon" style=${style}>
       <span class="app-cards-monogram">${name.charAt(0).toUpperCase() || '?'}</span>
     </div>
   `;
@@ -228,14 +236,15 @@ function Drawer({ activeItem, onClose }) {
  * @returns {import('../../vendor/preact.js').ComponentChild} Card UI
  */
 function CardTile({ item, onOpenDetails }) {
+  const linkLabel = item.name ? `Open ${item.name}` : 'Open card';
   return html`
     <li class="app-cards-card">
       ${item.href ? html`
         <a
           class="app-cards-link"
           href=${item.href}
-          aria-label=${item.name ? `Open ${item.name}` : 'Open card'}
-        ></a>
+          aria-label=${linkLabel}
+        ><span class="app-cards-visually-hidden">${linkLabel}</span></a>
       ` : null}
       <button
         class="app-cards-menu"
@@ -243,15 +252,16 @@ function CardTile({ item, onOpenDetails }) {
         aria-label=${item.name ? `Open details for ${item.name}` : 'Open details'}
         onClick=${onOpenDetails}
       >
-        <span aria-hidden="true">...</span>
+        <span aria-hidden="true">⋯</span>
       </button>
-      <div class="app-cards-content">
+      <div class="app-cards-body">
         <${CardIcon}
           name=${item.name}
           iconHtml=${item.iconHtml}
           hasIcon=${item.hasIcon}
+          palette=${item.palette}
         />
-        <p class="app-cards-name">${item.name}</p>
+        <h3 class="app-cards-name">${item.name}</h3>
       </div>
     </li>
   `;
