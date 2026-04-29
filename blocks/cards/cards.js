@@ -134,7 +134,6 @@ function getCardItems(block) {
         name,
         description,
         href,
-        tag,
         iconHtml: icon.html,
         hasIcon: icon.hasVisual,
         imageHtml: image.html,

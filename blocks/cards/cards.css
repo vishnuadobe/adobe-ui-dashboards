@@ -9,12 +9,13 @@ body.app-cards-drawer-open {
 
 .app-cards-shell {
   width: 100%;
+  padding-block: clamp(2rem, 5vw, 4rem);
 }
 
 .app-cards-grid {
   /* min card width — drives auto-fill column count; scales with viewport */
   --app-cards-min: clamp(12rem, 22vw, 18rem);
-  --grid-gap: clamp(0.75rem, 1.2vw, 1.5rem);
+  --grid-gap: clamp(1.25rem, 2vw, 2rem);
 
   display: grid;
   grid-template-columns: repeat(
@@ -23,9 +24,10 @@ body.app-cards-drawer-open {
   );
   gap: var(--grid-gap);
   width: 100%;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   list-style: none;
+  justify-content: center;
 }
 
 .app-cards-card {
@@ -38,17 +40,15 @@ body.app-cards-drawer-open {
   padding: clamp(1.25rem, 2vw, 2rem) clamp(0.875rem, 1.2vw, 1.25rem);
   background: var(--spectrum-background-color-primary, #fff);
   border: 1px solid var(--spectrum-border-color-secondary, #e0e0e0);
-  border-radius: var(--spectrum-border-radius-3, 12px);
+  border-radius: 20px;
   box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
   transition:
     box-shadow var(--spectrum-transition-duration-regular, 200ms) var(--spectrum-transition-ease-in-out, ease),
-    transform var(--spectrum-transition-duration-regular, 200ms) var(--spectrum-transition-ease-in-out, ease),
-    border-color var(--spectrum-transition-duration-regular, 200ms) var(--spectrum-transition-ease-in-out, ease);
+    transform var(--spectrum-transition-duration-regular, 200ms) var(--spectrum-transition-ease-in-out, ease);
 }
 
 .app-cards-card:hover,
 .app-cards-card:focus-within {
-  border-color: color-mix(in oklab, var(--spectrum-color-primary, #0b5cff) 35%, var(--spectrum-border-color-secondary, #e0e0e0));
   box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
   transform: translateY(-2px);
 }
