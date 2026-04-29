@@ -199,6 +199,44 @@ export default async function decorate(block) {
 
 ---
 
+## Blocks Reference
+
+### Cards Block (`blocks/cards/`)
+
+**Purpose**: Display app tiles with drawer details panel
+
+**Features**:
+- Responsive grid layout (1 column mobile, 2 columns tablet, 3 columns desktop)
+- App icon/monogram display
+- Drawer sidebar with app details, image, and launch button
+- Optional app preview images
+- Hover animations on buttons
+- Keyboard accessible (Escape to close drawer)
+
+**Authoring Structure** (5-column table):
+
+| Column | Type | Required | Description |
+|--------|------|----------|-------------|
+| Icon | Image/Icon | Yes | App icon or SVG |
+| Title | Text | Yes | App name |
+| Description | Text | Yes | App description (shown in drawer) |
+| Link | URL | Yes | Link to app or href attribute |
+| Image | Image | No | App preview/screenshot (displays in drawer sidebar) |
+
+**Example**:
+```
+| Icon | Title | Description | Link | Image |
+| [icon.svg] | Adobe Forum | Collaborative forum... | https://example.com | [screenshot.png] |
+```
+
+**Styling Notes**:
+- All selectors scoped to `.app-cards-*` namespace
+- Mobile-first responsive design
+- Uses Spectrum design tokens
+- Drawer opens from right side on desktop, full-screen on mobile
+
+---
+
 ## Important Rules
 
 ### ⚠️ NEVER MODIFY

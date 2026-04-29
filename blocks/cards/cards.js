@@ -45,10 +45,15 @@ function isHeaderRow(cols) {
   if (cols.length < 4) return false;
 
   const labels = cols.map((col) => col.textContent?.trim().toLowerCase() ?? '');
-  return labels[0] === 'icon'
+  const isFourCol = labels[0] === 'icon'
     && labels[1] === 'title'
     && labels[2] === 'description'
     && labels[3] === 'link';
+
+  const isFiveCol = cols.length >= 5 && labels[0] === 'icon' && labels[1] === 'title'
+    && labels[2] === 'description' && labels[3] === 'link' && labels[4] === 'image';
+
+  return isFourCol || isFiveCol;
 }
 
 /**
@@ -83,27 +88,28 @@ function getIconPayload(iconCol, name) {
 }
 
 /**
- * Picks a deterministic palette for the monogram based on the card name.
+ * Serializes the authored image content into a renderable payload.
  *
- * @param {string} name The card title
- * @returns {{bg: string, fg: string}} Background/foreground colors
+ * @param {Element | undefined} imageCol The image column
+ * @returns {{ html: string, hasImage: boolean }} The serialized image content
  */
-function pickPalette(name) {
-  const palettes = [
-    { bg: '#FDEAD7', fg: '#A6561A' },
-    { bg: '#E2F2EA', fg: '#1F6E46' },
-    { bg: '#E4EEFB', fg: '#1F4FA0' },
-    { bg: '#F2E8FB', fg: '#6A2CA0' },
-    { bg: '#FBE4E4', fg: '#B12C2C' },
-    { bg: '#E6F1F1', fg: '#1F6A6A' },
-    { bg: '#E8E5FF', fg: '#4B43D8' },
-    { bg: '#F5EAD7', fg: '#8A5A16' },
-  ];
-  let hash = 0;
-  for (let i = 0; i < name.length; i += 1) {
-    hash = (hash * 31 + name.charCodeAt(i)) % 1000000007;
+function getImagePayload(imageCol) {
+  const picture = imageCol?.querySelector('picture');
+  if (picture) {
+    const img = picture.querySelector('img');
+    img?.removeAttribute('width');
+    img?.removeAttribute('height');
+    return { html: picture.outerHTML, hasImage: true };
   }
-  return palettes[hash % palettes.length];
+
+  const img = imageCol?.querySelector('img');
+  if (img) {
+    img.removeAttribute('width');
+    img.removeAttribute('height');
+    return { html: img.outerHTML, hasImage: true };
+  }
+
+  return { html: '', hasImage: false };
 }
 
 /**
@@ -117,22 +123,21 @@ function getCardItems(block) {
     .map((row) => [...row.children])
     .filter((cols) => cols.length >= 4 && !isHeaderRow(cols))
     .map((cols) => {
-      const [iconCol, titleCol, descriptionCol, linkCol, tagCol] = cols;
+      const [iconCol, titleCol, descriptionCol, linkCol, imageCol] = cols;
       const name = titleCol?.textContent?.trim() ?? '';
       const description = descriptionCol?.textContent?.trim() ?? '';
       const href = getCardHref(linkCol);
-      const tag = tagCol?.textContent?.trim() ?? '';
-      const icon = getIconPayload(iconCol, name);
-      const palette = icon.hasVisual ? null : pickPalette(name);
+      const icon = getIconPayload(iconCol);
+      const image = getImagePayload(imageCol);
 
       return {
         name,
         description,
         href,
-        tag,
         iconHtml: icon.html,
         hasIcon: icon.hasVisual,
-        palette,
+        imageHtml: image.html,
+        hasImage: image.hasImage,
       };
     });
 }
@@ -199,6 +204,12 @@ function Drawer({ activeItem, onClose }) {
             Close
           </button>
         </div>
+        ${activeItem?.hasImage ? html`
+          <div
+            class="app-cards-drawer-image"
+            dangerouslySetInnerHTML=${{ __html: activeItem.imageHtml }}
+          />
+        ` : null}
         <div class="app-cards-drawer-body">
           <p class="app-cards-drawer-description">${activeItem?.description ?? ''}</p>
           ${activeItem?.href ? html`
@@ -206,7 +217,7 @@ function Drawer({ activeItem, onClose }) {
               class="app-cards-drawer-link button accent"
               href=${activeItem.href}
             >
-              Open app
+              Launch App
             </a>
           ` : null}
         </div>
@@ -305,8 +316,8 @@ function CardsApp({ items }) {
  *
  * Authored structure:
  * | Cards |
- * | Icon | Title | Description | Link | Tag (optional) |
- * | [img] | Photoshop | Edit and composite images | https://example.com/photoshop | Creative |
+ * | Icon | Title | Description | Link | Image |
+ * | [img] | Photoshop | Edit and composite images | https://example.com/photoshop | [screenshot] |
  *
  * @param {Element} block The block element
  */
