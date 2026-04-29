@@ -57,12 +57,14 @@ function isHeaderRow(cols) {
  * @param {Element | undefined} iconCol The icon column
  * @returns {{ html: string, hasVisual: boolean }} The serialized icon content
  */
-function getIconPayload(iconCol) {
+function getIconPayload(iconCol, name) {
+  const altText = name ? `${name} icon` : '';
   const picture = iconCol?.querySelector('picture');
   if (picture) {
     const img = picture.querySelector('img');
     img?.removeAttribute('width');
     img?.removeAttribute('height');
+    if (img && !img.getAttribute('alt')) img.setAttribute('alt', altText);
     return { html: picture.outerHTML, hasVisual: true };
   }
 
@@ -70,6 +72,7 @@ function getIconPayload(iconCol) {
   if (img) {
     img.removeAttribute('width');
     img.removeAttribute('height');
+    if (!img.getAttribute('alt')) img.setAttribute('alt', altText);
     return { html: img.outerHTML, hasVisual: true };
   }
 
@@ -77,6 +80,30 @@ function getIconPayload(iconCol) {
   if (svg) return { html: svg.outerHTML, hasVisual: true };
 
   return { html: '', hasVisual: false };
+}
+
+/**
+ * Picks a deterministic palette for the monogram based on the card name.
+ *
+ * @param {string} name The card title
+ * @returns {{bg: string, fg: string}} Background/foreground colors
+ */
+function pickPalette(name) {
+  const palettes = [
+    { bg: '#FDEAD7', fg: '#A6561A' },
+    { bg: '#E2F2EA', fg: '#1F6E46' },
+    { bg: '#E4EEFB', fg: '#1F4FA0' },
+    { bg: '#F2E8FB', fg: '#6A2CA0' },
+    { bg: '#FBE4E4', fg: '#B12C2C' },
+    { bg: '#E6F1F1', fg: '#1F6A6A' },
+    { bg: '#E8E5FF', fg: '#4B43D8' },
+    { bg: '#F5EAD7', fg: '#8A5A16' },
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i += 1) {
+    hash = (hash * 31 + name.charCodeAt(i)) % 1000000007;
+  }
+  return palettes[hash % palettes.length];
 }
 
 /**
@@ -90,18 +117,22 @@ function getCardItems(block) {
     .map((row) => [...row.children])
     .filter((cols) => cols.length >= 4 && !isHeaderRow(cols))
     .map((cols) => {
-      const [iconCol, titleCol, descriptionCol, linkCol] = cols;
+      const [iconCol, titleCol, descriptionCol, linkCol, tagCol] = cols;
       const name = titleCol?.textContent?.trim() ?? '';
       const description = descriptionCol?.textContent?.trim() ?? '';
       const href = getCardHref(linkCol);
-      const icon = getIconPayload(iconCol);
+      const tag = tagCol?.textContent?.trim() ?? '';
+      const icon = getIconPayload(iconCol, name);
+      const palette = icon.hasVisual ? null : pickPalette(name);
 
       return {
         name,
         description,
         href,
+        tag,
         iconHtml: icon.html,
         hasIcon: icon.hasVisual,
+        palette,
       };
     });
 }
@@ -113,18 +144,22 @@ function getCardItems(block) {
  * @param {string} props.name The card title
  * @param {string} props.iconHtml Serialized icon markup
  * @param {boolean} props.hasIcon Whether the card has icon markup
+ * @param {Object | null} props.palette Background/foreground for the monogram
  * @returns {import('../../vendor/preact.js').ComponentChild} Rendered icon
  */
-function CardIcon({ name, iconHtml, hasIcon }) {
+function CardIcon({
+  name, iconHtml, hasIcon, palette,
+}) {
   if (hasIcon) {
     return html`<div
-      class="app-cards-icon"
+      class="app-cards-icon has-image"
       dangerouslySetInnerHTML=${{ __html: iconHtml }}
     />`;
   }
 
+  const style = palette ? `--icon-bg:${palette.bg};--icon-fg:${palette.fg};` : '';
   return html`
-    <div class="app-cards-icon">
+    <div class="app-cards-icon" style=${style}>
       <span class="app-cards-monogram">${name.charAt(0).toUpperCase() || '?'}</span>
     </div>
   `;
@@ -189,14 +224,15 @@ function Drawer({ activeItem, onClose }) {
  * @returns {import('../../vendor/preact.js').ComponentChild} Card UI
  */
 function CardTile({ item, onOpenDetails }) {
+  const linkLabel = item.name ? `Open ${item.name}` : 'Open card';
   return html`
     <li class="app-cards-card">
       ${item.href ? html`
         <a
           class="app-cards-link"
           href=${item.href}
-          aria-label=${item.name ? `Open ${item.name}` : 'Open card'}
-        ></a>
+          aria-label=${linkLabel}
+        ><span class="app-cards-visually-hidden">${linkLabel}</span></a>
       ` : null}
       <button
         class="app-cards-menu"
@@ -204,15 +240,16 @@ function CardTile({ item, onOpenDetails }) {
         aria-label=${item.name ? `Open details for ${item.name}` : 'Open details'}
         onClick=${onOpenDetails}
       >
-        <span aria-hidden="true">...</span>
+        <span aria-hidden="true">⋯</span>
       </button>
-      <div class="app-cards-content">
+      <div class="app-cards-body">
         <${CardIcon}
           name=${item.name}
           iconHtml=${item.iconHtml}
           hasIcon=${item.hasIcon}
+          palette=${item.palette}
         />
-        <p class="app-cards-name">${item.name}</p>
+        <h3 class="app-cards-name">${item.name}</h3>
       </div>
     </li>
   `;
@@ -268,8 +305,8 @@ function CardsApp({ items }) {
  *
  * Authored structure:
  * | Cards |
- * | Icon | Title | Description | Link |
- * | [img] | Photoshop | Edit and composite images | https://example.com/photoshop |
+ * | Icon | Title | Description | Link | Tag (optional) |
+ * | [img] | Photoshop | Edit and composite images | https://example.com/photoshop | Creative |
  *
  * @param {Element} block The block element
  */
