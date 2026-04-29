@@ -217,6 +217,15 @@ body.app-cards-drawer-open {
   font-weight: var(--spectrum-font-weight-medium, 500);
   line-height: 1.25;
   flex-shrink: 0;
+  transition:
+    background var(--spectrum-transition-duration-short, 100ms) var(--spectrum-transition-ease-in-out, ease),
+    border-color var(--spectrum-transition-duration-short, 100ms) var(--spectrum-transition-ease-in-out, ease),
+    color var(--spectrum-transition-duration-short, 100ms) var(--spectrum-transition-ease-in-out, ease);
+}
+
+.app-cards-drawer-close:hover {
+  background: var(--spectrum-gray-75, #f4f4f4);
+  border-color: var(--spectrum-border-color-secondary, #e0e0e0);
 }
 
 .app-cards-drawer-close:focus-visible,
@@ -232,11 +241,11 @@ body.app-cards-drawer-open {
 }
 
 .app-cards-drawer-image {
-  width: 100%;
-  height: 16rem;
+  width: 75%;
+  height: 12rem;
   border-radius: var(--spectrum-border-radius-2, 8px);
   overflow: hidden;
-  margin-bottom: var(--spectrum-spacing-2, 8px);
+  margin: 0 auto var(--spectrum-spacing-2, 8px) auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -263,15 +272,15 @@ body.app-cards-drawer-open {
   align-items: center;
   justify-content: center;
   margin-top: var(--spectrum-spacing-2, 8px);
-  min-height: 2.625rem;
-  padding: 0.5rem 1rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
   border: 2px solid var(--spectrum-color-primary, #0b5cff);
   border-radius: 999px;
   background: var(--spectrum-color-primary, #0b5cff);
   color: var(--spectrum-background-color-primary, #fff);
-  font-size: var(--spectrum-body-font-size-s, 14px);
+  font-size: var(--spectrum-body-font-size-xs, 12px);
   font-weight: var(--spectrum-font-weight-medium, 500);
-  line-height: 1.25;
+  line-height: 1;
   text-decoration: none;
   transition:
     background var(--spectrum-transition-duration-short, 100ms) var(--spectrum-transition-ease-in-out, ease),
@@ -368,8 +377,8 @@ body.app-cards-drawer-open {
     width: 100%;
     justify-content: center;
     margin-top: var(--spectrum-spacing-3, 12px);
-    min-height: 2.625rem;
-    padding: 0.5rem 1rem;
+    min-height: 1rem;
+    padding: 0.25rem 0.75rem;
   }
 }
 

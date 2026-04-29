@@ -210,7 +210,7 @@ function Drawer({ activeItem, onClose }) {
               class="app-cards-drawer-link button accent"
               href=${activeItem.href}
             >
-              Open app
+              Launch App
             </a>
           ` : null}
         </div>

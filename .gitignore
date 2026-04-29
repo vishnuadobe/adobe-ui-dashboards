@@ -9,6 +9,9 @@ helix-importer-ui
 .idea
 docs/
 
+# Markdown files
+*.md
+
 # Ensure these files are tracked
 !CLAUDE.md
 !AGENTS.md
