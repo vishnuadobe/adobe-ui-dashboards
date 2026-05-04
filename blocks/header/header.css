@@ -306,3 +306,62 @@ header nav .nav-sections ul > li > ul > li {
 header nav .nav-tools {
   grid-area: tools;
 }
+
+header nav .nav-tools,
+header nav .nav-auth {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spectrum-spacing-3);
+}
+
+header nav .nav-auth {
+  min-width: 0;
+}
+
+header nav .nav-auth-user {
+  max-width: min(28ch, 32vw);
+  overflow: hidden;
+  color: var(--spectrum-text-color-secondary);
+  font-size: var(--body-font-size-s);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+header nav .nav-auth-button {
+  min-height: 2.25rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--spectrum-border-color-primary);
+  border-radius: 999px;
+  background: var(--spectrum-background-color-primary);
+  color: var(--spectrum-text-color-primary);
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color var(--spectrum-transition-duration-short) var(--spectrum-transition-ease-in-out),
+    background var(--spectrum-transition-duration-short) var(--spectrum-transition-ease-in-out),
+    color var(--spectrum-transition-duration-short) var(--spectrum-transition-ease-in-out);
+}
+
+header nav .nav-auth-button:hover {
+  border-color: var(--spectrum-color-primary);
+  color: var(--spectrum-color-primary);
+}
+
+header nav .nav-auth-button:focus-visible {
+  outline: 2px solid var(--spectrum-color-primary);
+  outline-offset: 2px;
+}
+
+@media (width <= 899px) {
+  header nav .nav-auth {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+  }
+
+  header nav .nav-auth-user {
+    max-width: 60vw;
+  }
+}
