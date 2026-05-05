@@ -11,6 +11,7 @@ import {
   loadSections,
   loadCSS,
 } from './aem.js';
+import { initializeAuth } from './auth.js';
 
 /**
  * Builds hero block and prepends to main in a new section.
@@ -181,6 +182,9 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  const canContinue = await initializeAuth(document);
+  if (!canContinue) return;
+
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
