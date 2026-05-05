@@ -10,7 +10,10 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  loadScript,
 } from './aem.js';
+import { initializeAuth } from './auth.js';
+import adobeImsConfig from './adobe-ims-config.js';
 
 /**
  * Builds hero block and prepends to main in a new section.
@@ -181,9 +184,66 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  const canContinue = await initializeAuth(document);
+  if (!canContinue) return;
+
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
 }
 
-loadPage();
+let imsLoaded;
+
+async function loadIms() {
+  if (!imsLoaded) {
+    imsLoaded = new Promise((resolve, reject) => {
+      const timeout = window.setTimeout(() => reject(new Error('IMS timeout')), 5000);
+
+      window.adobeid = {
+        client_id: adobeImsConfig.clientId,
+        environment: adobeImsConfig.environment,
+        scope: adobeImsConfig.scopes.join(','),
+        debug: false,
+        onReady: async () => {
+          try {
+            if (window.adobeIMS?.isSignedInUser?.()) {
+              await loadPage();
+            } else {
+              window.adobeIMS?.signIn?.();
+            }
+            resolve();
+          } catch (error) {
+            reject(error);
+          } finally {
+            window.clearTimeout(timeout);
+          }
+        },
+        onError: (error) => {
+          window.clearTimeout(timeout);
+          reject(error);
+        },
+      };
+
+      loadScript(adobeImsConfig.imsScript).catch((error) => {
+        window.clearTimeout(timeout);
+        reject(error);
+      });
+    });
+  }
+
+  return imsLoaded;
+}
+
+async function initializePage() {
+  const currentPageURL = window.location.href;
+  const isPreviewMode = currentPageURL.includes('.page');
+
+  if (isPreviewMode) {
+    await loadPage();
+    return;
+  }
+
+  await loadIms();
+}
+
+initializePage();
