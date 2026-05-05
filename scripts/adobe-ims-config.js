@@ -7,7 +7,7 @@ const adobeImsConfig = {
   tokenEndpoint: 'https://ims-na1.adobelogin.com/ims/token/v3',
   userInfoEndpoint: 'https://ims-na1.adobelogin.com/ims/userinfo/v2',
   revocationEndpoint: 'https://ims-na1.adobelogin.com/ims/revoke',
-  protectedPaths: ['/app-launcher'],
+  protectedPaths: ['/'],
 };
 
 export default adobeImsConfig;
