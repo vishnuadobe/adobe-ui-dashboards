@@ -1,93 +1,49 @@
-import { getMetadata } from './aem.js';
-import adobeImsConfig from './adobe-ims-config.js';
-import {
-  getUserProfile,
-  handleRedirectCallback,
-  isAuthenticated as hasAdobeSession,
-  login as startAdobeLogin,
-  logout as startAdobeLogout,
-} from './adobe-ims-client.js';
-
-function normalizePath(pathname) {
-  if (!pathname) return '/';
-  return pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname;
-}
-
-function getCallbackPath() {
-  return normalizePath(new URL(adobeImsConfig.redirectUri).pathname);
-}
-
-function getCurrentRelativeUri() {
-  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
-}
-
-export function isProtectedPage(doc = document, locationObj = window.location) {
-  const authMeta = getMetadata('auth', doc).trim().toLowerCase();
-  const currentPath = normalizePath(locationObj.pathname);
-  const protectedPaths = (adobeImsConfig.protectedPaths || []).map(normalizePath);
-
-  return authMeta === 'required' || protectedPaths.includes(currentPath);
-}
-
-export function isCallbackPage(pathname = window.location.pathname) {
-  return normalizePath(pathname) === getCallbackPath();
-}
-
-export async function isAuthenticated() {
-  return hasAdobeSession();
-}
-
-export async function login(originalUri = getCurrentRelativeUri()) {
-  await startAdobeLogin(originalUri);
-}
-
-export async function logout() {
-  await startAdobeLogout();
-}
-
-export async function getUser() {
-  const authenticated = await hasAdobeSession();
-
-  if (!authenticated) return null;
-
-  try {
-    return await getUserProfile();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Unable to fetch Adobe IMS user profile', error);
-    return null;
-  }
-}
-
-export async function handleLoginCallback() {
-  const { originalUri } = await handleRedirectCallback();
-  window.location.replace(originalUri);
-}
-
-export async function requireAuth(originalUri = getCurrentRelativeUri()) {
-  const authenticated = await isAuthenticated();
-  if (authenticated) return true;
-
-  await login(originalUri);
+export function isProtectedPage() {
   return false;
 }
 
-export async function initializeAuth(doc = document) {
-  if (isCallbackPage()) {
-    try {
-      await handleLoginCallback();
-    } catch (error) {
-      doc.body?.setAttribute('data-auth-error', 'callback');
-      // eslint-disable-next-line no-console
-      console.error('Adobe IMS callback handling failed', error);
-    }
+export function isCallbackPage() {
+  return false;
+}
 
-    return false;
-  }
+function getAdobeIMS() {
+  return window.adobeIMS;
+}
 
-  if (!isProtectedPage(doc)) {
-    return true;
-  }
+export async function isAuthenticated() {
+  return Boolean(getAdobeIMS()?.isSignedInUser?.());
+}
 
-  return requireAuth();
+export async function login() {
+  getAdobeIMS()?.signIn?.();
+}
+
+export async function logout() {
+  getAdobeIMS()?.signOut?.();
+}
+
+export async function getUser() {
+  const ims = getAdobeIMS();
+
+  if (!ims?.isSignedInUser?.()) return null;
+
+  const profile = ims.getUserProfile?.() || ims.profile || null;
+  if (profile) return profile;
+
+  const accessToken = ims.getAccessToken?.();
+  if (!accessToken) return null;
+
+  return { name: 'Signed in' };
+}
+
+export async function handleLoginCallback() {
+  return null;
+}
+
+export async function requireAuth() {
+  return isAuthenticated();
+}
+
+export async function initializeAuth() {
+  return true;
 }
