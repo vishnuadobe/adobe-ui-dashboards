@@ -1,11 +1,5 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
-import {
-  getUser,
-  isAuthenticated,
-  login,
-  logout,
-} from '../../scripts/auth.js';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -57,43 +51,6 @@ function openOnKeydown(e) {
 
 function focusNavSection() {
   document.activeElement.addEventListener('keydown', openOnKeydown);
-}
-
-async function buildAuthTools() {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'nav-auth';
-
-  const authenticated = await isAuthenticated();
-
-  if (!authenticated) {
-    const loginButton = document.createElement('button');
-    loginButton.type = 'button';
-    loginButton.className = 'nav-auth-button';
-    loginButton.textContent = 'Sign in';
-    loginButton.addEventListener('click', () => {
-      login();
-    });
-    wrapper.append(loginButton);
-    return wrapper;
-  }
-
-  const user = await getUser();
-  const label = user?.name || user?.email || 'Signed in';
-
-  const userLabel = document.createElement('span');
-  userLabel.className = 'nav-auth-user';
-  userLabel.textContent = label;
-
-  const logoutButton = document.createElement('button');
-  logoutButton.type = 'button';
-  logoutButton.className = 'nav-auth-button';
-  logoutButton.textContent = 'Sign out';
-  logoutButton.addEventListener('click', () => {
-    logout();
-  });
-
-  wrapper.append(userLabel, logoutButton);
-  return wrapper;
 }
 
 /**
@@ -173,44 +130,11 @@ export default async function decorate(block) {
     if (section) section.classList.add(`nav-${c}`);
   });
 
-  let navTools = nav.querySelector('.nav-tools');
-  if (!navTools) {
-    navTools = document.createElement('div');
-    navTools.className = 'nav-tools';
-    nav.append(navTools);
-  }
-
-  try {
-    navTools.append(await buildAuthTools());
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Unable to initialize header auth controls', error);
-  }
-
   const navBrand = nav.querySelector('.nav-brand');
   const brandLink = navBrand.querySelector('.button');
   if (brandLink) {
     brandLink.className = '';
     brandLink.closest('.button-container').className = '';
-  }
-
-  const brandAnchor = navBrand.querySelector('a');
-  const brandPicture = navBrand.querySelector('picture');
-  const brandImage = navBrand.querySelector('img');
-
-  if (brandAnchor) {
-    brandAnchor.classList.add('nav-brand-link');
-  }
-
-  if (brandPicture) {
-    brandPicture.classList.add('nav-brand-picture');
-  }
-
-  if (brandImage) {
-    brandImage.classList.add('nav-brand-logo');
-    if (!brandImage.getAttribute('decoding')) {
-      brandImage.setAttribute('decoding', 'async');
-    }
   }
 
   const navSections = nav.querySelector('.nav-sections');
