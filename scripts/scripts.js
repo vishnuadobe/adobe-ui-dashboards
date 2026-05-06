@@ -204,24 +204,18 @@ async function loadIms() {
         environment: adobeImsConfig.environment,
         scope: adobeImsConfig.scopes.join(','),
         debug: false,
-        onReady: async () => {
-          try {
-            if (window.adobeIMS?.isSignedInUser?.()) {
-              await loadPage();
-            } else {
-              window.adobeIMS?.signIn?.();
-            }
-            resolve();
-          } catch (error) {
-            reject(error);
-          } finally {
-            window.clearTimeout(timeout);
+        onReady: () => {
+          // eslint-disable-next-line no-console
+          console.log('Adobe IMS Ready!');
+          if (window.adobeIMS?.isSignedInUser()) {
+            loadPage();
+          } else {
+            window.adobeIMS?.signIn();
           }
-        },
-        onError: (error) => {
+          resolve();
           window.clearTimeout(timeout);
-          reject(error);
         },
+        onError: reject,
       };
 
       loadScript(adobeImsConfig.imsScript).catch((error) => {
@@ -230,7 +224,6 @@ async function loadIms() {
       });
     });
   }
-
   return imsLoaded;
 }
 
@@ -238,12 +231,11 @@ async function initializePage() {
   const currentPageURL = window.location.href;
   const isPreviewMode = currentPageURL.includes('.page');
 
-  if (isPreviewMode) {
-    await loadPage();
-    return;
+  if (!isPreviewMode) {
+    await loadIms();
+  } else {
+    loadPage();
   }
-
-  await loadIms();
 }
 
 initializePage();
