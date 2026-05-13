@@ -12,7 +12,12 @@ import {
   loadCSS,
   loadScript,
 } from './aem.js';
-import { initializeAuth } from './auth.js';
+import {
+  getDashboardPath,
+  initializeAuth,
+  isCallbackPage,
+  isProtectedPage,
+} from './auth.js';
 import adobeImsConfig from './adobe-ims-config.js';
 
 function createAuthShell() {
@@ -59,6 +64,10 @@ function hideAuthShell() {
   document.body.classList.remove('auth-pending');
   document.body.classList.remove('auth-shell-mounted');
   document.querySelector('.auth-shell')?.remove();
+}
+
+function isLocalEnvironment() {
+  return window.location.hostname.includes('localhost');
 }
 
 /**
@@ -255,6 +264,12 @@ async function loadIms() {
           console.log('Adobe IMS Ready!');
           window.clearTimeout(timeout);
 
+          if (isCallbackPage()) {
+            window.location.replace(getDashboardPath());
+            resolve(false);
+            return;
+          }
+
           if (window.adobeIMS?.isSignedInUser()) {
             resolve(true);
           } else {
@@ -276,10 +291,9 @@ async function loadIms() {
 }
 
 async function initializePage() {
-  const currentPageURL = window.location.href;
-  const isPreviewMode = currentPageURL.includes('.page');
+  const needsAuth = !isLocalEnvironment() && (isProtectedPage() || isCallbackPage());
 
-  if (!isPreviewMode) {
+  if (needsAuth) {
     showAuthShell();
 
     try {

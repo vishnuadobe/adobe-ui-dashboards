@@ -9,7 +9,9 @@
 <meta name="theme-color" content="#1473e6"/>
 <link rel="icon" href="/favicon.ico" sizes="any"/>
 <script nonce="aem">
-  if (!window.location.hostname.includes('localhost') && !window.location.href.includes('.page')) {
+  const pendingAuthPaths = ['/dashboard', '/login/callback'];
+  const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+  if (!window.location.hostname.includes('localhost') && pendingAuthPaths.includes(currentPath)) {
     document.documentElement.classList.add('auth-pending');
   }
 </script>

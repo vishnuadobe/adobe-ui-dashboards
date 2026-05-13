@@ -1,9 +1,21 @@
-export function isProtectedPage() {
-  return false;
+const DASHBOARD_PATH = '/dashboard';
+const CALLBACK_PATH = '/login/callback';
+
+function normalizePath(pathname = window.location.pathname) {
+  if (!pathname) return '/';
+  return pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname;
 }
 
-export function isCallbackPage() {
-  return false;
+export function getDashboardPath() {
+  return DASHBOARD_PATH;
+}
+
+export function isProtectedPage(pathname = window.location.pathname) {
+  return normalizePath(pathname) === DASHBOARD_PATH;
+}
+
+export function isCallbackPage(pathname = window.location.pathname) {
+  return normalizePath(pathname) === CALLBACK_PATH;
 }
 
 function getAdobeIMS() {
