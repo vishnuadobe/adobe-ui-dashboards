@@ -247,6 +247,11 @@ body {
   line-height: 1.6;
 }
 
+html.auth-pending body {
+  display: block;
+  min-height: 100vh;
+}
+
 body.appear {
   display: flex;
   flex-direction: column;
@@ -282,6 +287,39 @@ body.auth-pending footer {
 
 .auth-shell {
   display: none;
+}
+
+html.auth-pending body:not(.auth-shell-mounted)::before {
+  content: 'Adobe UI Dashboards\A\AChecking your Adobe access\A\APlease wait while we verify your session and prepare the dashboard.';
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  padding: clamp(1.5rem, 2vw, 2rem);
+  color: var(--spectrum-text-color-primary);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  font-weight: var(--spectrum-font-weight-medium);
+  line-height: 1.8;
+  text-align: center;
+  white-space: pre-line;
+}
+
+html.auth-pending body:not(.auth-shell-mounted)::after {
+  content: '';
+  position: fixed;
+  top: calc(50% + 7.25rem);
+  left: 50%;
+  z-index: 4;
+  width: 3rem;
+  height: 3rem;
+  margin-left: -1.5rem;
+  border: 3px solid rgb(11 92 255 / 16%);
+  border-top-color: var(--spectrum-color-primary);
+  border-radius: 50%;
+  animation: auth-shell-spin 0.9s linear infinite;
 }
 
 body.auth-pending .auth-shell {

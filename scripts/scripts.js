@@ -30,12 +30,14 @@ function createAuthShell() {
     </div>
   `;
 
+  document.body.classList.add('auth-shell-mounted');
   document.body.prepend(shell);
   return shell;
 }
 
 function showAuthShell(message) {
   document.documentElement.lang = 'en';
+  document.documentElement.classList.add('auth-pending');
   document.body.classList.add('appear', 'auth-pending');
 
   const shell = createAuthShell();
@@ -53,7 +55,9 @@ function updateAuthShell(message) {
 }
 
 function hideAuthShell() {
+  document.documentElement.classList.remove('auth-pending');
   document.body.classList.remove('auth-pending');
+  document.body.classList.remove('auth-shell-mounted');
   document.querySelector('.auth-shell')?.remove();
 }
 
