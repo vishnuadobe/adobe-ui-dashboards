@@ -10,8 +10,65 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  loadScript,
 } from './aem.js';
-import { initializeAuth } from './auth.js';
+import {
+  getDashboardPath,
+  initializeAuth,
+  isCallbackPage,
+  isProtectedPage,
+} from './auth.js';
+import adobeImsConfig from './adobe-ims-config.js';
+
+function createAuthShell() {
+  const existingShell = document.querySelector('.auth-shell');
+  if (existingShell) return existingShell;
+
+  const shell = document.createElement('div');
+  shell.className = 'auth-shell';
+  shell.innerHTML = `
+    <div class="auth-shell-panel">
+      <p class="auth-shell-eyebrow">Adobe UI Dashboards</p>
+      <h1 class="auth-shell-title">Checking your Adobe access</h1>
+      <p class="auth-shell-copy">Please wait while we verify your session and prepare the dashboard.</p>
+      <div class="auth-shell-status" aria-hidden="true"></div>
+    </div>
+  `;
+
+  document.body.classList.add('auth-shell-mounted');
+  document.body.prepend(shell);
+  return shell;
+}
+
+function showAuthShell(message) {
+  document.documentElement.lang = 'en';
+  document.documentElement.classList.add('auth-pending');
+  document.body.classList.add('appear', 'auth-pending');
+
+  const shell = createAuthShell();
+  const copy = shell.querySelector('.auth-shell-copy');
+  if (copy && message) {
+    copy.textContent = message;
+  }
+}
+
+function updateAuthShell(message) {
+  const copy = document.querySelector('.auth-shell-copy');
+  if (copy && message) {
+    copy.textContent = message;
+  }
+}
+
+function hideAuthShell() {
+  document.documentElement.classList.remove('auth-pending');
+  document.body.classList.remove('auth-pending');
+  document.body.classList.remove('auth-shell-mounted');
+  document.querySelector('.auth-shell')?.remove();
+}
+
+function isLocalEnvironment() {
+  return window.location.hostname.includes('localhost');
+}
 
 /**
  * Builds hero block and prepends to main in a new section.
@@ -190,4 +247,69 @@ async function loadPage() {
   loadDelayed();
 }
 
-loadPage();
+let imsLoaded;
+
+async function loadIms() {
+  if (!imsLoaded) {
+    imsLoaded = new Promise((resolve, reject) => {
+      const timeout = window.setTimeout(() => reject(new Error('IMS timeout')), 5000);
+
+      window.adobeid = {
+        client_id: adobeImsConfig.clientId,
+        environment: adobeImsConfig.environment,
+        scope: adobeImsConfig.scopes.join(','),
+        debug: false,
+        onReady: () => {
+          // eslint-disable-next-line no-console
+          console.log('Adobe IMS Ready!');
+          window.clearTimeout(timeout);
+
+          if (isCallbackPage()) {
+            window.location.replace(getDashboardPath());
+            resolve(false);
+            return;
+          }
+
+          if (window.adobeIMS?.isSignedInUser()) {
+            resolve(true);
+          } else {
+            updateAuthShell('Redirecting you to Adobe sign-in.');
+            window.adobeIMS?.signIn();
+            resolve(false);
+          }
+        },
+        onError: reject,
+      };
+
+      loadScript(adobeImsConfig.imsScript).catch((error) => {
+        window.clearTimeout(timeout);
+        reject(error);
+      });
+    });
+  }
+  return imsLoaded;
+}
+
+async function initializePage() {
+  const needsAuth = !isLocalEnvironment() && (isProtectedPage() || isCallbackPage());
+
+  if (needsAuth) {
+    showAuthShell();
+
+    try {
+      const authenticated = await loadIms();
+      if (!authenticated) return;
+
+      hideAuthShell();
+      await loadPage();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Adobe IMS failed to initialize', error);
+      updateAuthShell('We could not complete Adobe sign-in. Please refresh and try again.');
+    }
+  } else {
+    await loadPage();
+  }
+}
+
+initializePage();

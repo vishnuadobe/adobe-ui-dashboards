@@ -1,93 +1,61 @@
-import { getMetadata } from './aem.js';
-import adobeImsConfig from './adobe-ims-config.js';
-import {
-  getUserProfile,
-  handleRedirectCallback,
-  isAuthenticated as hasAdobeSession,
-  login as startAdobeLogin,
-  logout as startAdobeLogout,
-} from './adobe-ims-client.js';
+const DASHBOARD_PATH = '/dashboard';
+const CALLBACK_PATH = '/login/callback';
 
-function normalizePath(pathname) {
+function normalizePath(pathname = window.location.pathname) {
   if (!pathname) return '/';
   return pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname;
 }
 
-function getCallbackPath() {
-  return normalizePath(new URL(adobeImsConfig.redirectUri).pathname);
+export function getDashboardPath() {
+  return DASHBOARD_PATH;
 }
 
-function getCurrentRelativeUri() {
-  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
-}
-
-export function isProtectedPage(doc = document, locationObj = window.location) {
-  const authMeta = getMetadata('auth', doc).trim().toLowerCase();
-  const currentPath = normalizePath(locationObj.pathname);
-  const protectedPaths = (adobeImsConfig.protectedPaths || []).map(normalizePath);
-
-  return authMeta === 'required' || protectedPaths.includes(currentPath);
+export function isProtectedPage(pathname = window.location.pathname) {
+  return normalizePath(pathname) === DASHBOARD_PATH;
 }
 
 export function isCallbackPage(pathname = window.location.pathname) {
-  return normalizePath(pathname) === getCallbackPath();
+  return normalizePath(pathname) === CALLBACK_PATH;
+}
+
+function getAdobeIMS() {
+  return window.adobeIMS;
 }
 
 export async function isAuthenticated() {
-  return hasAdobeSession();
+  return Boolean(getAdobeIMS()?.isSignedInUser?.());
 }
 
-export async function login(originalUri = getCurrentRelativeUri()) {
-  await startAdobeLogin(originalUri);
+export async function login() {
+  getAdobeIMS()?.signIn?.();
 }
 
 export async function logout() {
-  await startAdobeLogout();
+  getAdobeIMS()?.signOut?.();
 }
 
 export async function getUser() {
-  const authenticated = await hasAdobeSession();
+  const ims = getAdobeIMS();
 
-  if (!authenticated) return null;
+  if (!ims?.isSignedInUser?.()) return null;
 
-  try {
-    return await getUserProfile();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Unable to fetch Adobe IMS user profile', error);
-    return null;
-  }
+  const profile = ims.getUserProfile?.() || ims.profile || null;
+  if (profile) return profile;
+
+  const accessToken = ims.getAccessToken?.();
+  if (!accessToken) return null;
+
+  return { name: 'Signed in' };
 }
 
 export async function handleLoginCallback() {
-  const { originalUri } = await handleRedirectCallback();
-  window.location.replace(originalUri);
+  return null;
 }
 
-export async function requireAuth(originalUri = getCurrentRelativeUri()) {
-  const authenticated = await isAuthenticated();
-  if (authenticated) return true;
-
-  await login(originalUri);
-  return false;
+export async function requireAuth() {
+  return isAuthenticated();
 }
 
-export async function initializeAuth(doc = document) {
-  if (isCallbackPage()) {
-    try {
-      await handleLoginCallback();
-    } catch (error) {
-      doc.body?.setAttribute('data-auth-error', 'callback');
-      // eslint-disable-next-line no-console
-      console.error('Adobe IMS callback handling failed', error);
-    }
-
-    return false;
-  }
-
-  if (!isProtectedPage(doc)) {
-    return true;
-  }
-
-  return requireAuth();
+export async function initializeAuth() {
+  return true;
 }
