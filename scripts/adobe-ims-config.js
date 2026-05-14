@@ -1,7 +1,12 @@
+const DEV_PREVIEW_ORIGIN = 'https://dev--adobe-ui-dashboards--vishnuadobe.aem.page';
+const currentOrigin = window.location.hostname.includes('localhost')
+  ? DEV_PREVIEW_ORIGIN
+  : window.location.origin;
+
 const adobeImsConfig = {
   clientId: 'uidashboard',
-  redirectUri: `${window.location.origin}/login/callback`,
-  postLogoutRedirectUri: window.location.origin,
+  redirectUri: currentOrigin,
+  postLogoutRedirectUri: currentOrigin,
   scopes: [
     'AdobeID',
     'additional_info.company',
@@ -19,7 +24,7 @@ const adobeImsConfig = {
   tokenEndpoint: 'https://ims-na1.adobelogin.com/ims/token/v3',
   userInfoEndpoint: 'https://ims-na1.adobelogin.com/ims/userinfo/v2',
   revocationEndpoint: 'https://ims-na1.adobelogin.com/ims/revoke',
-  protectedPaths: ['/dashboard'],
+  protectedPaths: ['/'],
 };
 
 export default adobeImsConfig;
