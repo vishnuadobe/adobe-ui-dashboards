@@ -130,11 +130,37 @@ export default async function decorate(block) {
     if (section) section.classList.add(`nav-${c}`);
   });
 
+  let navTools = nav.querySelector('.nav-tools');
+  if (!navTools) {
+    navTools = document.createElement('div');
+    navTools.className = 'nav-tools';
+    nav.append(navTools);
+  }
+
   const navBrand = nav.querySelector('.nav-brand');
   const brandLink = navBrand.querySelector('.button');
   if (brandLink) {
     brandLink.className = '';
     brandLink.closest('.button-container').className = '';
+  }
+
+  const brandAnchor = navBrand.querySelector('a');
+  const brandPicture = navBrand.querySelector('picture');
+  const brandImage = navBrand.querySelector('img');
+
+  if (brandAnchor) {
+    brandAnchor.classList.add('nav-brand-link');
+  }
+
+  if (brandPicture) {
+    brandPicture.classList.add('nav-brand-picture');
+  }
+
+  if (brandImage) {
+    brandImage.classList.add('nav-brand-logo');
+    if (!brandImage.getAttribute('decoding')) {
+      brandImage.setAttribute('decoding', 'async');
+    }
   }
 
   const navSections = nav.querySelector('.nav-sections');
